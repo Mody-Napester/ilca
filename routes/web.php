@@ -25,10 +25,12 @@ Route::group(['prefix'=>'dashboard', 'middleware' => 'auth'],function (){
     Route::resource('roles', 'RolesController');
     Route::resource('users', 'UsersController');
     Route::resource('leads', 'LeadsController');
-    Route::resource('companies', 'CompanyController');
-    Route::resource('clients', 'ClientController');
-    Route::resource('activities', 'ActivityController');
-
-    Route::get('activity-payments/{activity}', 'ActivityPaymentController@show')->name('activity-payments.show');
-    Route::post('activity-payments/{activity}', 'ActivityPaymentController@store')->name('activity-payments.store');
+    Route::resource('certificates', 'CertificatesController');
+    Route::resource('courses', 'CoursesController');
+    Route::post('courses/student/store', 'CoursesController@addStudent')->name('courses.student.store');
+    Route::get('courses/certificates/{course_uuid}/{student_uuid}', 'CoursesController@showOrEditCertificates')->name('courses.certificates');
+    Route::get('courses/payments/{course_uuid}/{student_uuid}', 'CoursesController@showOrEditPayments')->name('courses.payments');
+    Route::resource('students', 'StudentsController');
+    Route::resource('trainers', 'TrainersController');
+    Route::resource('locations', 'LocationsController');
 });

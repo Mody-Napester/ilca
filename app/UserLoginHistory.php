@@ -34,7 +34,7 @@ class UserLoginHistory extends Model
             $result = self::create([
                 'user_id' => $user->id,
                 'login_ip' => get_client_ip(),
-                'login_data' => json_encode(get_browser(null, true)),
+                'login_data' => '', // json_encode(get_browser(null, true))
             ]);
 
             return $result;

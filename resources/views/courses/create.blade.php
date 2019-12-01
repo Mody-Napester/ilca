@@ -94,6 +94,22 @@
                 @endif
             </div>
         </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="" for="certificates">Certificates</label>
+                <select id="certificates" multiple class="select2 form-control{{ $errors->has('certificates') ? ' is-invalid' : '' }}" name="certificates[]" >
+                    @foreach($certificates as $certificate)
+                        <option @if($certificate->uuid == old('certificates')) selected @endif value="{{ $certificate->uuid }}">{{ $certificate->name }}</option>
+                    @endforeach
+                </select>
+
+                @if ($errors->has('certificates'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('certificates') }}</strong>
+                    </span>
+                @endif
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="details">Details</label>

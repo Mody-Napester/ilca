@@ -91,8 +91,20 @@ class UsersController extends Controller
 
         // Return
         if ($resource){
-            return back();
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Created Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
     }
 
     /**
@@ -167,8 +179,58 @@ class UsersController extends Controller
 
         // Return
         if ($updatedResource){
-            return back();
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Updated Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
+    }
+
+    /**
+     * Show user profile.
+     */
+    public function showUserProfile()
+    {
+        $data['user'] = User::getBy('id', auth()->user()->id);
+        return view('users.profile.show', $data);
+    }
+
+    /**
+     * Update Password
+     */
+    public function updatePassword(Request $request,$user)
+    {
+        // Get Resource
+        $resource = User::getBy('uuid', $user);
+
+        if($resource){
+            $resource->password = bcrypt($request->password);
+            $resource->save();
+
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Password updated successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Sorry! User not exists.',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
+
     }
 
     /**
@@ -185,9 +247,27 @@ class UsersController extends Controller
 
             // Return
             if ($deletedResource){
-                return back();
+                $data['message'] = [
+                    'msg_status' => 1,
+                    'type' => 'success',
+                    'text' => 'Deleted Successfully',
+                ];
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Error!',
+                ];
             }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Not Exists!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
 
     }
 }

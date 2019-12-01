@@ -79,6 +79,14 @@ class Course extends Model
     }
 
     /**
+     *  Relationship with certificates
+     */
+    public function certificates()
+    {
+        return $this->belongsToMany('App\Certificate', 'course_certificate');
+    }
+
+    /**
      *  Relationship with trainers
      */
     public function trainers()

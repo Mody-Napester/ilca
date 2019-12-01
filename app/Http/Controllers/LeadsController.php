@@ -71,8 +71,20 @@ class LeadsController extends Controller
 
         // Return
         if ($resource){
-            return back();
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Created Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
     }
 
     /**
@@ -136,8 +148,20 @@ class LeadsController extends Controller
 
         // Return
         if ($updatedResource){
-            return back();
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Updated Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
     }
 
     /**
@@ -154,9 +178,27 @@ class LeadsController extends Controller
 
             // Return
             if ($deletedResource){
-                return back();
+                $data['message'] = [
+                    'msg_status' => 1,
+                    'type' => 'success',
+                    'text' => 'Deleted Successfully',
+                ];
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Error!',
+                ];
             }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Not Exists!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
 
     }
 }

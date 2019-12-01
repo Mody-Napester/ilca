@@ -1,4 +1,4 @@
-<form method="post" action="{{ route('locations.update', $resource->uuid) }}" enctype="multipart/form-data">
+<form method="post" action="{{ route('certificates.update', $resource->uuid) }}" enctype="multipart/form-data">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
 

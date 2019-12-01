@@ -56,14 +56,14 @@
                         <tr>
                             <td>{{ $student->name }}</td>
                             <td>
-                                <a href="{{ route('courses.certificates', [$course->uuid, $student->uuid]) }}"
-                                   class="btn btn-sm btn-success">
+                                <a href="{{ route('courses.certificates.show', [$course->uuid, $student->uuid]) }}"
+                                   class="show-certificates btn btn-sm btn-success">
                                     Show or edit
                                 </a>
                             </td>
                             <td>
                                 <a href="{{ route('courses.payments', [$course->uuid, $student->uuid]) }}"
-                                   class="btn btn-sm btn-danger">
+                                   class="show-payments btn btn-sm btn-danger">
                                     Show or edit
                                 </a>
                             </td>
@@ -75,39 +75,69 @@
         </div>
     </div>
     <!-- end row -->
-
 @endsection
 
 @section('scripts')
     <script>
+        // General Update
+        $('body').on('click', '.show-certificates', function (event) {
+            event.preventDefault();
+            var url, targetModal;
+
+            url = $(this).attr('href');
+            targetModal = $('#show-certificates');
+
+            // Get contents
+            $.ajax({
+                method:'GET',
+                url:url,
+                beforeSend:function () {
+                    addLoader();
+                },
+                success:function (data) {
+                    targetModal.find('#certiModalLabel').text(data.title);
+                    targetModal.find('.modal-body').html(data.view);
+                    // Select2
+                    $(".select2").select2();
+                    removeLoarder();
+                },
+                error:function () {
+
+                }
+            });
+
+            // Show modal
+            targetModal.modal();
+        });
+
         var tableDTUsers = $('#datatable-history-buttons').DataTable({
             lengthChange: false,
-            // buttons: [
-            //     {
-            //         extend: 'copyHtml5',
-            //         exportOptions: {
-            //             columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16]
-            //         }
-            //     },
-            //     {
-            //         extend: 'excelHtml5',
-            //         exportOptions: {
-            //             columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16]
-            //         }
-            //     },
-            //     {
-            //         extend: 'pdfHtml5',
-            //         exportOptions: {
-            //             columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16]
-            //         }
-            //     },
-            //     {
-            //         extend: 'print',
-            //         exportOptions: {
-            //             columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16]
-            //         }
-            //     }
-            // ],
+            buttons: [
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                }
+            ],
         });
         tableDTUsers.buttons().container().appendTo('#datatable-history-buttons_wrapper .col-md-6:eq(0)');
 

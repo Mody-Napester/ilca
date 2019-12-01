@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Certificate;
 use App\Course;
 use App\Location;
 use App\Student;
 use App\Trainer;
 use App\User;
+use Carbon\Carbon;
+use DB;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -40,6 +43,7 @@ class CoursesController extends Controller
         $data['resources'] = Course::all();
         $data['trainers'] = Trainer::all();
         $data['locations'] = Location::all();
+        $data['certificates'] = Certificate::all();
 
         return view('courses.index', $data);
     }
@@ -101,10 +105,32 @@ class CoursesController extends Controller
             }
         }
 
-        // Return
-        if ($resource) {
-            return back();
+        // Add Certificates
+        if ($request->has('certificates')) {
+            foreach ($request->certificates as $certificate_uuid) {
+                $certificate = Certificate::getBy('uuid', $certificate_uuid);
+                if ($certificate) {
+                    $resource->certificates()->attach($certificate->id);
+                }
+            }
         }
+
+        // Return
+        if ($resource){
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Created Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
     }
 
     /**
@@ -146,37 +172,85 @@ class CoursesController extends Controller
                     }
                 }
             }
+
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Created Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Not Exists',
+            ];
         }
 
-        return back();
+        return back()->with('message', $data['message']);
 
     }
 
     /**
      * Add Student to course.
      */
-    public function showOrEditCertificates(Request $request)
+    public function showOrEditCertificates($course_uuid, $student_uuid)
     {
-        $course = Course::getBy('uuid', $request->course_uuid);
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
 
-        if($course){
-            // Add Courses
-            if ($request->has('students')) {
+        if($data['course']){
+            return response([
+                'title' => "Certificates for " . $data['student']->name,
+                'view' => view('courses._certificates', $data)->render(),
+            ]);
+        }
+    }
 
-                $course->students()->detach();
+    /**
+     * Store Student Certificates.
+     */
+    public function storeStudentCertificates(Request $request, $course_uuid, $student_uuid)
+    {
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
 
-                foreach ($request->students as $student_uuid) {
-                    $student = Student::getBy('uuid', $student_uuid);
-                    if ($student) {
-                        $course->students()->attach($student->id);
+        if($data['course']){
+            // Add Certificates
+            if ($request->has('certificates')) {
+                foreach ($request->certificates as $certificate_uuid) {
+                    $certificate = Certificate::getBy('uuid', $certificate_uuid);
+
+                    if ($certificate) {
+                        DB::table('course_student_certificate')->insert([
+                           'course_id' => $data['course']->id,
+                           'student_id' => $data['student']->id,
+                           'certificate_id' => $certificate->id,
+                           'created_at' => Carbon::now()->toDateTimeString(),
+                           'updated_at' => Carbon::now()->toDateTimeString(),
+                           'created_by' => auth()->user()->id,
+                           'updated_by' => auth()->user()->id
+                        ]);
                     }
                 }
             }
+
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Updated Successfully',
+            ];
+
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Not Exists',
+            ];
         }
 
-        return back();
-
+        return back()->with('message', $data['message']);
     }
+
     /**
      * Add Student to course.
      */
@@ -214,6 +288,7 @@ class CoursesController extends Controller
         $data['resource'] = Course::getBy('uuid', $uuid);
         $data['trainers'] = Trainer::all();
         $data['locations'] = Location::all();
+        $data['certificates'] = Certificate::all();
 
         return response([
             'title' => "Update resource " . $data['resource']->name,
@@ -280,10 +355,32 @@ class CoursesController extends Controller
             }
         }
 
-        // Return
-        if ($updatedResource) {
-            return back();
+        // Add Certificates
+        if ($request->has('certificates')) {
+            foreach ($request->certificates as $certificate_uuid) {
+                $certificate = Certificate::getBy('uuid', $certificate_uuid);
+                if ($certificate) {
+                    $resource->certificates()->attach($certificate->id);
+                }
+            }
         }
+
+        // Return
+        if ($updatedResource){
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Updated Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Error!',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
     }
 
     /**
@@ -300,10 +397,28 @@ class CoursesController extends Controller
             $deletedResource = Course::remove($resource->id);
 
             // Return
-            if ($deletedResource) {
-                return back();
+            if ($deletedResource){
+                $data['message'] = [
+                    'msg_status' => 1,
+                    'type' => 'success',
+                    'text' => 'Deleted Successfully',
+                ];
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Error!',
+                ];
             }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Not Exists!',
+            ];
         }
+
+        return back()->with('message', $data['message']);
 
     }
 }

@@ -134,24 +134,14 @@
                        href="#" role="button"
                        aria-haspopup="false" aria-expanded="false">
                         <span style="margin-right: 10px;"><i class="fa fa-fw fa-angle-down"></i> {{ Auth::user()->name }}</span>
-                        <img src="{{ url('assets/images/users/avatar-1.jpg') }}" alt="user" class="rounded-circle">
+{{--                        <img src="{{ url('assets/images/users/avatar-1.jpg') }}" alt="user" class="rounded-circle">--}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-dropdown " aria-labelledby="Preview">
 
 
                         <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <a href="{{ route('users.showUserProfile') }}" class="dropdown-item notify-item">
                             <i class="md md-account-circle"></i> <span>Profile</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="md md-settings"></i> <span>Settings</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="md md-lock-open"></i> <span>Lock Screen</span>
                         </a>
 
                         <!-- item-->
@@ -332,6 +322,10 @@
 @include('_modals.update')
 <!-- Delete Modal -->
 @include('_modals.delete')
+<!-- Certificates Modal -->
+@include('_modals.certificates')
+<!-- Payments Modal -->
+@include('_modals.payments')
 
 <script>
     var resizefunc = [];

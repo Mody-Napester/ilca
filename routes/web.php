@@ -1,27 +1,15 @@
 <?php
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('auth.login');
+    return redirect(route('login'));
 });
 
 Auth::routes();
-//Auth::routes(['verify' => true]);
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-/*
-|--------------------------------------------------------------------------
-| Dashboard routes
-|--------------------------------------------------------------------------
-|
-| Here is where dashboard routes exists.
-|
-*/
 
 Route::group(['prefix'=>'dashboard', 'middleware' => 'auth'],function (){
     // User update data
     Route::get('user/profile', 'UsersController@showUserProfile')->name('users.showUserProfile');
-    // Update password
     Route::put('users/{user}/update_password', 'UsersController@updatePassword')->name('users.update_password');
 
     Route::get('/', 'DashboardController@index')->name('dashboard.index');

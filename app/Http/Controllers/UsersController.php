@@ -6,6 +6,7 @@ use App\Permission;
 use App\PermissionGroup;
 use App\Role;
 use App\User;
+use App\UserType;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -37,6 +38,7 @@ class UsersController extends Controller
         }
         $data['roles'] = Role::all();
         $data['resources'] = User::all();
+        $data['types'] = UserType::all();
         return view('users.index', $data);
     }
 
@@ -59,6 +61,9 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         // Check permissions
+        if (!User::hasAuthority('store.users')){
+            return redirect('/');
+        }
 
         // Check validation
         $validator = Validator::make($request->all(), [
@@ -66,6 +71,7 @@ class UsersController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|max:20',
             'password' => 'required|string|min:6',
+            'type' => 'required',
         ]);
 
         if ($validator->fails()){
@@ -74,9 +80,11 @@ class UsersController extends Controller
 
         // Do Code
         $resource = User::store([
+            'user_type_id' => $request->type,
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'status' => 1,
             'password' => bcrypt($request->password),
             'created_by' => auth()->user()->id,
             'updated_by' => auth()->user()->id
@@ -126,8 +134,14 @@ class UsersController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.users')){
+            return redirect('/');
+        }
+
         $data['roles'] = Role::all();
         $data['resource'] = User::getBy('uuid', $uuid);
+        $data['types'] = UserType::all();
+
         return response([
             'title'=> "Update user " . $data['resource']->name,
             'view'=> view('users.edit', $data)->render(),
@@ -144,6 +158,9 @@ class UsersController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.users')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = User::getBy('uuid', $uuid);
@@ -153,6 +170,7 @@ class UsersController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $resource->id,
             'phone' => 'required|max:20',
+            'type' => 'required',
         ]);
 
         if ($validator->fails()){
@@ -161,6 +179,7 @@ class UsersController extends Controller
 
         // Do Code
         $updatedResource = User::edit([
+            'user_type_id' => $request->type,
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
@@ -200,6 +219,10 @@ class UsersController extends Controller
      */
     public function showUserProfile()
     {
+        if (!User::hasAuthority('show.users')){
+            return redirect('/');
+        }
+
         $data['user'] = User::getBy('id', auth()->user()->id);
         return view('users.profile.show', $data);
     }
@@ -209,6 +232,10 @@ class UsersController extends Controller
      */
     public function updatePassword(Request $request,$user)
     {
+        if (!User::hasAuthority('update_password.users')){
+            return redirect('/');
+        }
+
         // Get Resource
         $resource = User::getBy('uuid', $user);
 
@@ -241,6 +268,10 @@ class UsersController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.users')){
+            return redirect('/');
+        }
+
         $resource = User::getBy('uuid', $uuid);
         if ($resource){
             $deletedResource = User::remove($resource->id);

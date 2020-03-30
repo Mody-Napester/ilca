@@ -30,9 +30,10 @@ class LeadsController extends Controller
      */
     public function index()
     {
-//        if (!User::hasAuthority('index.leads')){
-//            return redirect('/');
-//        }
+        if (!User::hasAuthority('index.leads')){
+            return redirect('/');
+        }
+
         $data['resources'] = Lead::all();
         return view('leads.index', $data);
     }
@@ -46,7 +47,7 @@ class LeadsController extends Controller
     public function store(Request $request)
     {
         // Check permissions
-        if (!User::hasAuthority('index.leads')){
+        if (!User::hasAuthority('store.leads')){
             return redirect('/');
         }
 
@@ -95,7 +96,10 @@ class LeadsController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!User::hasAuthority('show.leads')){
+            return redirect('/');
+        }
+
     }
 
     /**
@@ -106,6 +110,10 @@ class LeadsController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.leads')){
+            return redirect('/');
+        }
+
         $data['resource'] = Lead::getBy('uuid', $uuid);
         return response([
             'title'=> "Update resource " . $data['resource']->name,
@@ -123,6 +131,9 @@ class LeadsController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.leads')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Lead::getBy('uuid', $uuid);
@@ -172,6 +183,10 @@ class LeadsController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.leads')){
+            return redirect('/');
+        }
+
         $resource = Lead::getBy('uuid', $uuid);
         if ($resource){
             $deletedResource = Lead::remove($resource->id);

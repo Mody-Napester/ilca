@@ -24,18 +24,18 @@
     <div class="row">
         <div class="col-lg-12">
             <ul class="nav nav-tabs navtab-bg nav-justified">
+                {{--<li class="nav-item">--}}
+                    {{--<a href="#searchResource" data-toggle="tab" aria-expanded="false" class="nav-link active">Search and filter</a>--}}
+                {{--</li>--}}
                 <li class="nav-item">
-                    <a href="#searchResource" data-toggle="tab" aria-expanded="false" class="nav-link active">Search and filter</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#createResource" data-toggle="tab" aria-expanded="true" class="nav-link">Create new</a>
+                    <a href="#createResource" data-toggle="tab" aria-expanded="true" class="nav-link active">Create new</a>
                 </li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="searchResource">
-                    @include('trainers.search')
-                </div>
-                <div class="tab-pane" id="createResource">
+                {{--<div class="tab-pane active" id="searchResource">--}}
+                    {{--@include('trainers.search')--}}
+                {{--</div>--}}
+                <div class="tab-pane active" id="createResource">
                     @include('trainers.create')
                 </div>
             </div>
@@ -83,14 +83,19 @@
                             <td>{{ $resource->created_at }}</td>
                             <td>{{ $resource->updated_at }}</td>
                             <td>
+                                @if (\App\User::hasAuthority('edit.trainers'))
                                 <a href="{{ route('trainers.edit', [$resource->uuid]) }}"
                                    class="update-modal btn btn-sm btn-success">
                                     <i class="fa fa-edit"></i>
                                 </a>
+                                @endif
+
+                                @if (\App\User::hasAuthority('delete.trainers'))
                                 <a href="{{ route('trainers.destroy', [$resource->uuid]) }}"
                                    class="confirm-delete btn btn-sm btn-danger">
                                     <i class="fa fa-times"></i>
                                 </a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

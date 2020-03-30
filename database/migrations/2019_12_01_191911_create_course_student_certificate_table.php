@@ -17,6 +17,7 @@ class CreateCourseStudentCertificateTable extends Migration
             $table->integer('course_id');
             $table->integer('student_id');
             $table->integer('certificate_id');
+            $table->string('date');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();

@@ -48,6 +48,7 @@
                             <th>Student</th>
                             <th>Certificates</th>
                             <th>Payment</th>
+                            <th>Research</th>
                         </tr>
                     </thead>
 
@@ -62,8 +63,14 @@
                                 </a>
                             </td>
                             <td>
-                                <a href="{{ route('courses.payments', [$course->uuid, $student->uuid]) }}"
+                                <a href="{{ route('courses.payments.show', [$course->uuid, $student->uuid]) }}"
                                    class="show-payments btn btn-sm btn-danger">
+                                    Show or edit
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ route('courses.research.show', [$course->uuid, $student->uuid]) }}"
+                                   class="show-research btn btn-sm btn-warning">
                                     Show or edit
                                 </a>
                             </td>
@@ -79,37 +86,6 @@
 
 @section('scripts')
     <script>
-        // General Update
-        $('body').on('click', '.show-certificates', function (event) {
-            event.preventDefault();
-            var url, targetModal;
-
-            url = $(this).attr('href');
-            targetModal = $('#show-certificates');
-
-            // Get contents
-            $.ajax({
-                method:'GET',
-                url:url,
-                beforeSend:function () {
-                    addLoader();
-                },
-                success:function (data) {
-                    targetModal.find('#certiModalLabel').text(data.title);
-                    targetModal.find('.modal-body').html(data.view);
-                    // Select2
-                    $(".select2").select2();
-                    removeLoarder();
-                },
-                error:function () {
-
-                }
-            });
-
-            // Show modal
-            targetModal.modal();
-        });
-
         var tableDTUsers = $('#datatable-history-buttons').DataTable({
             lengthChange: false,
             buttons: [

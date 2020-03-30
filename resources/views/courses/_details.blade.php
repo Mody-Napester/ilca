@@ -12,12 +12,25 @@
         <p><b>Number of students :</b> {{ $course->students->count() }}</p>
     </div>
     <div class="col-sm-6">
-        <p><b>Price egp :</b> {{ $course->price_egp }}</p>
-        <p><b>Price usd :</b> {{ $course->price_usd }}</p>
+        {{--<p><b>Price egp :</b> {{ $course->price_egp }}</p>--}}
+        {{--<p><b>Price usd :</b> {{ $course->price_usd }}</p>--}}
         <p><b>Date from :</b> {{ $course->date_from }}</p>
         <p><b>Date to :</b> {{ $course->date_to }}</p>
-        <p><b>Trainers :</b> @foreach($course->trainers as $trainer) {{ $trainer->name }},  @endforeach</p>
-        <p><b>Certificates :</b> @foreach($course->certificates as $certificate) {{ $certificate->name }},  @endforeach</p>
+        <p><b>Trainers :</b>
+            @foreach($course->trainers as $trainer)
+                <span class="label label-danger" style="margin-right: 5px;"> {{ $trainer->name }} </span>
+            @endforeach
+        </p>
+        <p><b>Prices :</b>
+            @foreach($course->prices as $price)
+                <span class="label label-primary" style="margin-right: 5px;"> {{ $price->price }} - {{ $price->currency->name }} </span>
+            @endforeach
+        </p>
+        <p><b>Certificates :</b>
+            @foreach($course->certificates as $certificate)
+                <span class="label label-success" style="margin-right: 5px;"> {{ $certificate->name }} </span>
+            @endforeach
+        </p>
     </div>
 </div>
 

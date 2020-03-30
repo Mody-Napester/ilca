@@ -1,0 +1,2 @@
+ALTER TABLE `courses` ADD `is_active` BOOLEAN NOT NULL DEFAULT TRUE AFTER `date_to`;
+ALTER TABLE `course_student` ADD `course_price_id` INT NULL AFTER `sales_id`;

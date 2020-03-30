@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="email">Email</label>
-                <input type="email" id="email" autocomplete="off" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus/>
+                <input type="email" id="email" autocomplete="off" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" />
 
                 @if ($errors->has('email'))
                     <span class="invalid-feedback" role="alert">
@@ -29,7 +29,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="phone">Phone</label>
-                <input id="phone" type="text" autocomplete="off" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" name="phone" value="{{ old('phone') }}" required>
+                <input id="phone" type="text" autocomplete="off" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" name="phone" value="{{ old('phone') }}">
 
                 @if ($errors->has('phone'))
                     <span class="invalid-feedback" role="alert">
@@ -41,7 +41,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="address">Address</label>
-                <input id="address" type="text" autocomplete="off" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" name="address" value="{{ old('address') }}" required>
+                <input id="address" type="text" autocomplete="off" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" name="address" value="{{ old('address') }}">
 
                 @if ($errors->has('address'))
                     <span class="invalid-feedback" role="alert">

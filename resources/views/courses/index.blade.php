@@ -58,10 +58,12 @@
                             <th>Id</th>
                             <th>Title</th>
                             <th>Location</th>
-                            <th>Price EGP</th>
-                            <th>Price USD</th>
+                            {{--<th>Price EGP</th>--}}
+                            {{--<th>Price USD</th>--}}
                             <th>Date from</th>
                             <th>Date to</th>
+                            {{--<th>Sales</th>--}}
+                            <th>Active</th>
                             <th>Created by</th>
                             <th>Updated by</th>
                             <th>Created at</th>
@@ -76,27 +78,41 @@
                             <td>{{ $resource->id }}</td>
                             <td>{{ $resource->title }}</td>
                             <td>{{ $resource->location->name }}</td>
-                            <td>{{ $resource->price_egp }}</td>
-                            <td>{{ $resource->price_usd }}</td>
+                            {{--<td>{{ $resource->price_egp }}</td>--}}
+                            {{--<td>{{ $resource->price_usd }}</td>--}}
                             <td>{{ $resource->date_from }}</td>
                             <td>{{ $resource->date_to }}</td>
+{{--                            <td>{{ ($resource->sales)? $resource->sales->name : '-' }}</td>--}}
+                            <td>
+                                @if($resource->is_active == 1)
+                                    <span class="badge badge-success">Yes</span>
+                                @else
+                                    <span class="badge badge-danger">No</span>
+                                @endif
+                            </td>
                             <td>{{ $resource->createdBy->name }}</td>
                             <td>{{ ($resource->updatedBy)? $resource->updatedBy->name : '-' }}</td>
                             <td>{{ $resource->created_at }}</td>
                             <td>{{ $resource->updated_at }}</td>
                             <td>
+                                @if (\App\User::hasAuthority('show.courses'))
                                 <a href="{{ route('courses.show', [$resource->uuid]) }}"
                                    class="btn btn-sm btn-default">
                                     <i class="fa fa-eye"></i>
                                 </a>
+                                @endif
+                                @if (\App\User::hasAuthority('edit.courses'))
                                 <a href="{{ route('courses.edit', [$resource->uuid]) }}"
                                    class="update-modal btn btn-sm btn-success">
                                     <i class="fa fa-edit"></i>
                                 </a>
+                                @endif
+                                @if (\App\User::hasAuthority('delete.courses'))
                                 <a href="{{ route('courses.destroy', [$resource->uuid]) }}"
                                    class="confirm-delete btn btn-sm btn-danger">
                                     <i class="fa fa-times"></i>
                                 </a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

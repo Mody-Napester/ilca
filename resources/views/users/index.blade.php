@@ -72,12 +72,17 @@
                                 <td>{{ $resource->created_at }}</td>
                                 <td>{{ $resource->updated_at }}</td>
                                 <td>
+                                    @if (\App\User::hasAuthority('edit.users'))
                                     <a href="{{ route('users.edit', [$resource->uuid]) }}" class="update-modal btn btn-sm btn-success">
                                         <i class="fa fa-edit"></i>
                                     </a>
+                                    @endif
+
+                                    @if (\App\User::hasAuthority('delete.users'))
                                     <a href="{{ route('users.destroy', [$resource->uuid]) }}" class="confirm-delete btn btn-sm btn-danger">
                                         <i class="fa fa-times"></i>
                                     </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

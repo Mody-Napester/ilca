@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Certificate;
 use App\Course;
+use App\CoursePrice;
 use App\Location;
 use App\Student;
 use App\Trainer;
@@ -34,16 +35,28 @@ class CoursesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!User::hasAuthority('index.courses')) {
             return redirect('/');
         }
 
-        $data['resources'] = Course::all();
         $data['trainers'] = Trainer::all();
+        $data['prices'] = CoursePrice::all();
         $data['locations'] = Location::all();
         $data['certificates'] = Certificate::all();
+
+        if(!empty($request->all())){
+            $data['resources'] = new Course();
+
+            if($request->has('title')){
+                $data['resources'] = Course::where('title', 'like', "%".$request->title."%");
+            }
+
+            $data['resources'] = $data['resources']->get();
+        }else{
+            $data['resources'] = Course::all();
+        }
 
         return view('courses.index', $data);
     }
@@ -61,15 +74,19 @@ class CoursesController extends Controller
             return redirect('/');
         }
 
+//        dd($request->all());
+
         // Check validation
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255|unique:courses,title',
             'details' => 'required',
             'location' => 'required',
-            'price_egp' => 'required',
-            'price_usd' => 'required',
+//            'price_egp' => 'required',
+//            'price_usd' => 'required',
             'date_from' => 'required',
             'date_to' => 'required',
+            'prices' => 'required',
+            'is_active' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -87,11 +104,12 @@ class CoursesController extends Controller
             'title' => $request->title,
             'details' => $request->details,
             'location_id' => $location->id,
-            'price_egp' => $request->price_egp,
-            'price_usd' => $request->price_usd,
+            'price_egp' => 1,//$request->price_egp,
+            'price_usd' => 1,//$request->price_usd,
             'date_from' => $request->date_from,
             'date_to' => $request->date_to,
-            'comments' => $request->comments,
+            'is_active' => (int)$request->is_active,
+            'comments' => ($request->has('comments'))? $request->comments : '-',
             'created_by' => auth()->user()->id,
         ]);
 
@@ -101,6 +119,16 @@ class CoursesController extends Controller
                 $trainer = Trainer::getBy('uuid', $trainer_uuid);
                 if ($trainer) {
                     $resource->trainers()->attach($trainer->id);
+                }
+            }
+        }
+
+        // Add Prices
+        if ($request->has('prices')) {
+            foreach ($request->prices as $price_uuid) {
+                $price = CoursePrice::getBy('uuid', $price_uuid);
+                if ($price) {
+                    $resource->prices()->attach($price->id);
                 }
             }
         }
@@ -141,12 +169,19 @@ class CoursesController extends Controller
      */
     public function show($uuid)
     {
-        if (!User::hasAuthority('index.courses')) {
+        if (!User::hasAuthority('show.courses')) {
             return redirect('/');
         }
 
         $data['course'] = Course::getBy('uuid', $uuid);
+
+        if(empty($data['course'])){
+            return redirect('/');
+        }
+
         $data['students'] = Student::all();
+        $data['sales'] = User::where('user_type_id', 2)->get(); // Sales
+        $data['prices'] = CoursePrice::all();
 
         return view('courses.show', $data);
 
@@ -157,20 +192,34 @@ class CoursesController extends Controller
      */
     public function addStudent(Request $request)
     {
+        if (!User::hasAuthority('courses.add_student')) {
+            return redirect('/');
+        }
+
         $course = Course::getBy('uuid', $request->course_uuid);
 
+        $sales = ($request->has('sales')) ? User::getBy('uuid', $request->sales)->id : null;
+
+        $price = CoursePrice::getBy('uuid', $request->price);
+
+//        dd($sales);
         if($course){
             // Add Courses
             if ($request->has('students')) {
 
-                $course->students()->detach();
+//                $course->students()->detach();
 
-                foreach ($request->students as $student_uuid) {
-                    $student = Student::getBy('uuid', $student_uuid);
-                    if ($student) {
-                        $course->students()->attach($student->id);
-                    }
+                $student = Student::getBy('uuid', $request->students);
+                if ($student) {
+                    $course->students()->attach($student->id, [
+                        'sales_id' => $sales,
+                        'course_price_id' => $price->id,
+                    ]);
                 }
+//
+//                foreach ($request->students as $student_uuid) {
+//
+//                }
             }
 
             $data['message'] = [
@@ -195,12 +244,16 @@ class CoursesController extends Controller
      */
     public function showOrEditCertificates($course_uuid, $student_uuid)
     {
+        if (!User::hasAuthority('show_edit_certificates.courses')) {
+            return redirect('/');
+        }
+
         $data['course'] = Course::getBy('uuid', $course_uuid);
         $data['student'] = Student::getBy('uuid', $student_uuid);
 
         if($data['course']){
             return response([
-                'title' => "Certificates for " . $data['student']->name,
+                'title' => "Certificates for : <span class='text-danger'>" . $data['student']->name . "</span>",
                 'view' => view('courses._certificates', $data)->render(),
             ]);
         }
@@ -211,13 +264,17 @@ class CoursesController extends Controller
      */
     public function storeStudentCertificates(Request $request, $course_uuid, $student_uuid)
     {
+        if (!User::hasAuthority('store_student_certificates.courses')) {
+            return redirect('/');
+        }
+
         $data['course'] = Course::getBy('uuid', $course_uuid);
         $data['student'] = Student::getBy('uuid', $student_uuid);
 
         if($data['course']){
             // Add Certificates
             if ($request->has('certificates')) {
-                foreach ($request->certificates as $certificate_uuid) {
+                foreach ($request->certificates as $key => $certificate_uuid) {
                     $certificate = Certificate::getBy('uuid', $certificate_uuid);
 
                     if ($certificate) {
@@ -225,6 +282,7 @@ class CoursesController extends Controller
                            'course_id' => $data['course']->id,
                            'student_id' => $data['student']->id,
                            'certificate_id' => $certificate->id,
+                           'date' => $request->dates[$key],
                            'created_at' => Carbon::now()->toDateTimeString(),
                            'updated_at' => Carbon::now()->toDateTimeString(),
                            'created_by' => auth()->user()->id,
@@ -252,31 +310,182 @@ class CoursesController extends Controller
     }
 
     /**
-     * Add Student to course.
+     * Show Or Edit Payments.
      */
-    public function showOrEditPayments(Request $request)
+    public function showOrEditPayments($course_uuid, $student_uuid)
     {
-        $course = Course::getBy('uuid', $request->course_uuid);
-
-        if($course){
-            // Add Courses
-            if ($request->has('students')) {
-
-                $course->students()->detach();
-
-                foreach ($request->students as $student_uuid) {
-                    $student = Student::getBy('uuid', $student_uuid);
-                    if ($student) {
-                        $course->students()->attach($student->id);
-                    }
-                }
-            }
+        if (!User::hasAuthority('show_edit_payments.courses')) {
+            return redirect('/');
         }
 
-        return back();
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
+        $studentCourses = DB::table('course_student')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id)
+            ->first();
+        $data['price'] = CoursePrice::getBy('id', $studentCourses->course_price_id);
+
+        $data['payments'] = DB::table('course_payment')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id);
+
+        $data['sumPayments'] = $data['payments']->sum('amount');
+        $data['allPayments'] = $data['payments']->get();
+
+        if($data['course']){
+            return response([
+                'title' => "Payments for : <span class='text-danger'>" . $data['student']->name . "</span>",
+                'view' => view('courses._payments', $data)->render(),
+            ]);
+        }
 
     }
 
+    /**
+     * Store Student Payments.
+     */
+    public function storeStudentPayments(Request $request, $course_uuid, $student_uuid)
+    {
+        if (!User::hasAuthority('store_student_certificates.courses')) {
+            return redirect('/');
+        }
+
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
+
+        $studentCourses = DB::table('course_student')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id)
+            ->first();
+        $data['price'] = CoursePrice::getBy('id', $studentCourses->course_price_id);
+
+        $data['sumPayments'] = DB::table('course_payment')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id)
+            ->sum('amount');
+
+        if($data['course']){
+            // Add Payments
+            if ($request->has('amount') && $request->amount <= $data['sumPayments'] && $request->amount != 0) {
+                DB::table('course_payment')->insert([
+                    'course_id' => $data['course']->id,
+                    'student_id' => $data['student']->id,
+                    'amount' => $request->amount,
+                    'date' => $request->date,
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'created_by' => auth()->user()->id,
+                    'updated_by' => auth()->user()->id
+                ]);
+
+                $data['message'] = [
+                    'msg_status' => 1,
+                    'type' => 'success',
+                    'text' => 'Updated Successfully',
+                ];
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Amount must be between 1 to ' . ($data['price']->price - $data['sumPayments']) . ' ' . $data['price']->currency->code,
+                ];
+            }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Course Not Exists',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
+    }
+
+    /**
+     * Show Or Edit Research.
+     */
+    public function showOrEditResearch($course_uuid, $student_uuid)
+    {
+        if (!User::hasAuthority('show_edit_payments.courses')) {
+            return redirect('/');
+        }
+
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
+        $data['researches'] = DB::table('course_research')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id)
+            ->get();
+
+        if($data['course']){
+            return response([
+                'title' => "Researches for : <span class='text-danger'>" . $data['student']->name . "</span>",
+                'view' => view('courses._research', $data)->render(),
+            ]);
+        }
+
+    }
+
+    /**
+     * Store Student Research.
+     */
+    public function storeStudentResearch(Request $request, $course_uuid, $student_uuid)
+    {
+        if (!User::hasAuthority('store_student_certificates.courses')) {
+            return redirect('/');
+        }
+
+        $data['course'] = Course::getBy('uuid', $course_uuid);
+        $data['student'] = Student::getBy('uuid', $student_uuid);
+
+        if($data['course']){
+            // Add Research
+            if ($request->hasFile('research')) {
+                $upload = upload_file('text', $request->file('research'), 'assets/images/research');
+                if ($upload['status'] == true){
+                    $research = $upload['filename'];
+
+                    DB::table('course_research')->insert([
+                        'course_id' => $data['course']->id,
+                        'student_id' => $data['student']->id,
+                        'research' => $research,
+                        'date' => $request->date,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'updated_at' => Carbon::now()->toDateTimeString(),
+                        'created_by' => auth()->user()->id,
+                        'updated_by' => auth()->user()->id
+                    ]);
+
+                    $data['message'] = [
+                        'msg_status' => 1,
+                        'type' => 'success',
+                        'text' => 'Updated Successfully',
+                    ];
+
+                }else{
+                    return back()->with('message',[
+                        'type'=> 'danger',
+                        'text'=> 'Image ' . $upload['message']
+                    ]);
+                }
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Please attach research!',
+                ];
+            }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Course Not Exists',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -285,10 +494,16 @@ class CoursesController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.courses')) {
+            return redirect('/');
+        }
+
         $data['resource'] = Course::getBy('uuid', $uuid);
         $data['trainers'] = Trainer::all();
         $data['locations'] = Location::all();
         $data['certificates'] = Certificate::all();
+        $data['prices'] = CoursePrice::all();
+        $data['sales'] = User::where('user_type_id', 2)->get();
 
         return response([
             'title' => "Update resource " . $data['resource']->name,
@@ -306,19 +521,26 @@ class CoursesController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.courses')) {
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Course::getBy('uuid', $uuid);
+
+//        dd($request->all());
 
         // Check validation
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255|unique:courses,title,' . $resource->id,
             'details' => 'required',
             'location' => 'required',
-            'price_egp' => 'required',
-            'price_usd' => 'required',
+//            'price_egp' => 'required',
+//            'price_usd' => 'required',
             'date_from' => 'required',
             'date_to' => 'required',
+            'prices' => 'required',
+            'is_active' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -336,11 +558,12 @@ class CoursesController extends Controller
             'title' => $request->title,
             'details' => $request->details,
             'location_id' => $location->id,
-            'price_egp' => $request->price_egp,
-            'price_usd' => $request->price_usd,
+//            'price_egp' => $request->price_egp,
+//            'price_usd' => $request->price_usd,
             'date_from' => $request->date_from,
             'date_to' => $request->date_to,
-            'comments' => $request->comments,
+            'is_active' => $request->is_active,
+            'comments' => ($request->has('comments'))? $request->comments : '-',
             'updated_by' => auth()->user()->id
         ], $resource->id);
 
@@ -355,8 +578,20 @@ class CoursesController extends Controller
             }
         }
 
+        // Add Prices
+        if ($request->has('prices')) {
+            $resource->prices()->detach();
+            foreach ($request->prices as $price_uuid) {
+                $price = CoursePrice::getBy('uuid', $price_uuid);
+                if ($price) {
+                    $resource->prices()->attach($price->id);
+                }
+            }
+        }
+
         // Add Certificates
         if ($request->has('certificates')) {
+            $resource->certificates()->detach();
             foreach ($request->certificates as $certificate_uuid) {
                 $certificate = Certificate::getBy('uuid', $certificate_uuid);
                 if ($certificate) {
@@ -391,6 +626,10 @@ class CoursesController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.courses')) {
+            return redirect('/');
+        }
+
         $resource = Course::getBy('uuid', $uuid);
         if ($resource) {
 

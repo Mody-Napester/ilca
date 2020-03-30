@@ -326,6 +326,8 @@
 @include('_modals.certificates')
 <!-- Payments Modal -->
 @include('_modals.payments')
+<!-- Research Modal -->
+@include('_modals.research')
 
 <script>
     var resizefunc = [];

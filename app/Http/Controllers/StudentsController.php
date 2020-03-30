@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\CoursePrice;
+use App\Nationality;
 use App\Student;
 use App\Course;
 use App\User;
 use Validator;
+use DB;
 use Illuminate\Http\Request;
 
 class StudentsController extends Controller
@@ -37,6 +40,8 @@ class StudentsController extends Controller
 
         $data['resources'] = Student::all();
         $data['courses'] = Course::all();
+        $data['nationalities'] = Nationality::all();
+        $data['sales'] = User::where('user_type_id', 2)->get(); // Sales
 
         return view('students.index', $data);
     }
@@ -71,6 +76,7 @@ class StudentsController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'comments' => $request->comments,
+            'nationality' => $request->nationality,
             'created_by' => auth()->user()->id,
         ]);
 
@@ -121,11 +127,16 @@ class StudentsController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.students')){
+            return redirect('/');
+        }
+
         $data['resource'] = Student::getBy('uuid', $uuid);
         $data['courses'] = Course::all();
+        $data['nationalities'] = Nationality::all();
 
         return response([
-            'title'=> "Update resource " . $data['resource']->name,
+            'title'=> "Update resource : <span class='text-danger'>" . $data['resource']->name . "</span>",
             'view'=> view('students.edit', $data)->render(),
         ]);
     }
@@ -140,6 +151,9 @@ class StudentsController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.students')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Student::getBy('uuid', $uuid);
@@ -147,7 +161,7 @@ class StudentsController extends Controller
         // Check validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'address' => 'required|max:20',
+//            'address' => 'required|max:20',
         ]);
 
         if ($validator->fails()){
@@ -161,6 +175,7 @@ class StudentsController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'comments' => $request->comments,
+            'nationality' => $request->nationality,
             'updated_by' => auth()->user()->id
         ], $resource->id);
 
@@ -200,6 +215,10 @@ class StudentsController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.students')){
+            return redirect('/');
+        }
+
         $resource = Student::getBy('uuid', $uuid);
         if ($resource){
 
@@ -228,6 +247,100 @@ class StudentsController extends Controller
         }
 
         return back()->with('message', $data['message']);
+
+    }
+
+    /*
+     * showOrEditCourses
+     * */
+    public function showOrEditCourses($student_uuid){
+
+        if (!User::hasAuthority('edit.students')){
+            return redirect('/');
+        }
+
+        $data['student'] = Student::getBy('uuid', $student_uuid);
+
+        $data['courses'] = Course::where('is_active', 1)->get();
+
+        $data['prices'] = CoursePrice::all();
+
+        $data['studentCourses'] = DB::table('course_student')->where('student_id', $data['student']->id)->get();
+
+        $data['sales'] = User::where('user_type_id', 2)->get(); // Sales
+
+        $data['title'] = "Courses For : <span class='text-danger'>" . $data['student']->name . "</span>";
+
+        return response([
+            'view'=> view('students.courses.index', $data)->render(),
+        ]);
+    }
+
+    /*
+     * storeStudentCourses
+     * */
+    public function storeStudentCourses(Request $request, $student_uuid){
+
+//        dd($request->all());
+        $course = Course::getBy('uuid', $request->course);
+        $sales = ($request->has('sales') && $request->sales != '0' ) ? User::getBy('uuid', $request->sales)->id : null;
+        $student = Student::getBy('uuid', $student_uuid);
+        $price = CoursePrice::getBy('uuid', $request->price);
+
+        if($course){
+            $studentCourses = DB::table('course_student')
+                ->where('course_id', $course->id)
+                ->where('student_id', $student->id)
+                ->first();
+
+            if($student){
+                if ($studentCourses) {
+                    $data['message'] = [
+                        'msg_status' => 0,
+                        'type' => 'danger',
+                        'text' => 'This course added before for this student',
+                    ];
+                }else{
+                    $course->students()->attach($student->id, [
+                        'sales_id' => $sales,
+                        'course_price_id' => $price->id,
+                    ]);
+
+                    $data['message'] = [
+                        'msg_status' => 1,
+                        'type' => 'success',
+                        'text' => 'Created Successfully',
+                    ];
+                }
+            }else{
+                $data['message'] = [
+                    'msg_status' => 0,
+                    'type' => 'danger',
+                    'text' => 'Student Not Exists',
+                ];
+            }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Course Not Exists',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
+    }
+
+    /*
+     * showOrEditCertificates
+     * */
+    public function showOrEditCertificates($student_uuid){
+
+    }
+
+    /*
+     * showOrEditPayments
+     * */
+    public function showOrEditPayments($student_uuid){
 
     }
 }

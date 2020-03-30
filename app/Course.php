@@ -15,6 +15,7 @@ class Course extends Model
         'title', 'details', 'location_id',
         'price_egp', 'price_usd', 'comments',
         'date_from', 'date_to',
+        'sales_id','is_active',
         'created_by', 'updated_by'];
 
     /**
@@ -72,6 +73,15 @@ class Course extends Model
     /**
      *  Relationship with users
      */
+    public function sales()
+    {
+        return $this->belongsTo('App\User', 'sales_id');
+
+    }
+
+    /**
+     *  Relationship with users
+     */
     public function updatedBy()
     {
         return $this->belongsTo('App\User', 'updated_by');
@@ -83,7 +93,7 @@ class Course extends Model
      */
     public function certificates()
     {
-        return $this->belongsToMany('App\Certificate', 'course_certificate');
+        return $this->belongsToMany('App\Certificate', 'course_certificate')->withTimestamps();
     }
 
     /**
@@ -91,7 +101,15 @@ class Course extends Model
      */
     public function trainers()
     {
-        return $this->belongsToMany('App\Trainer', 'course_trainer');
+        return $this->belongsToMany('App\Trainer', 'course_trainer')->withTimestamps();
+    }
+
+    /**
+     *  Relationship with prices
+     */
+    public function prices()
+    {
+        return $this->belongsToMany('App\CoursePrice', 'course_course_price')->withTimestamps();
     }
 
     /**
@@ -99,7 +117,7 @@ class Course extends Model
      */
     public function students()
     {
-        return $this->belongsToMany('App\Student', 'course_student');
+        return $this->belongsToMany('App\Student', 'course_student')->withPivot(['sales_id', 'course_price_id'])->withTimestamps();
     }
 
     /**

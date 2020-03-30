@@ -104,6 +104,10 @@ class CertificatesController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.certificates')){
+            return redirect('/');
+        }
+
         $data['resource'] = Certificate::getBy('uuid', $uuid);
         return response([
             'title'=> "Update resource " . $data['resource']->name,
@@ -121,6 +125,9 @@ class CertificatesController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.certificates')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Certificate::getBy('uuid', $uuid);
@@ -167,6 +174,10 @@ class CertificatesController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.certificates')){
+            return redirect('/');
+        }
+
         $resource = Certificate::getBy('uuid', $uuid);
 
         if ($resource){

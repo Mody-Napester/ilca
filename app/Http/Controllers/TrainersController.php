@@ -55,7 +55,7 @@ class TrainersController extends Controller
         // Check validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'address' => 'required|max:20',
+//            'address' => 'required|max:20',
         ]);
 
         if ($validator->fails()){
@@ -98,7 +98,9 @@ class TrainersController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!User::hasAuthority('show.trainers')){
+            return redirect('/');
+        }
     }
 
     /**
@@ -109,6 +111,10 @@ class TrainersController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.trainers')){
+            return redirect('/');
+        }
+
         $data['resource'] = Trainer::getBy('uuid', $uuid);
         return response([
             'title'=> "Update resource " . $data['resource']->name,
@@ -126,6 +132,9 @@ class TrainersController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.trainers')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Trainer::getBy('uuid', $uuid);
@@ -133,7 +142,7 @@ class TrainersController extends Controller
         // Check validation
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'address' => 'required|max:20',
+//            'address' => 'required|max:20',
         ]);
 
         if ($validator->fails()){
@@ -176,6 +185,10 @@ class TrainersController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.trainers')){
+            return redirect('/');
+        }
+
         $resource = Trainer::getBy('uuid', $uuid);
         if ($resource){
 

@@ -13,7 +13,7 @@ class Student extends Model
      */
     protected $fillable = [
         'name', 'phone', 'email', 'comments',
-        'country_id', 'city_id', 'area_id', 'address',
+        'country_id', 'city_id', 'area_id', 'address','nationality',
         'created_by', 'updated_by'
     ];
 
@@ -83,6 +83,16 @@ class Student extends Model
      */
     public function courses()
     {
-        return $this->belongsToMany('App\Course', 'course_student');
+        return $this->belongsToMany('App\Course', 'course_student')->withTimestamps();
     }
+
+    /**
+     *  Relationship with Nationality
+     */
+    public function student_nationality()
+    {
+        return $this->belongsTo('App\Nationality', 'nationality');
+
+    }
+
 }

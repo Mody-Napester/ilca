@@ -3,7 +3,7 @@
     {{ method_field('PUT') }}
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="title">Title</label>
                 <input id="title" type="text" autocomplete="off" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $resource->title }}" required>
@@ -17,28 +17,43 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label class="" for="price_egp">Price EGP</label>
-                <input id="price_egp" type="text" autocomplete="off" class="form-control{{ $errors->has('price_egp') ? ' is-invalid' : '' }}" name="price_egp" value="{{ $resource->price_egp }}" required>
+                <label class="" for="is_active">Is Active</label>
+                <select id="is_active" class="select2 form-control{{ $errors->has('is_active') ? ' is-invalid' : '' }}" name="is_active" >
+                     <option @if($resource->is_active == 1) selected @endif value="1">Yes</option>
+                     <option @if($resource->is_active == 0) selected @endif value="0">No</option>
+                </select>
 
-                @if ($errors->has('price_egp'))
+                @if ($errors->has('is_active'))
                     <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('price_egp') }}</strong>
+                        <strong>{{ $errors->first('is_active') }}</strong>
                     </span>
                 @endif
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label class="" for="price_usd">Price USD</label>
-                <input id="price_usd" type="text" autocomplete="off" class="form-control{{ $errors->has('price_usd') ? ' is-invalid' : '' }}" name="price_usd" value="{{ $resource->price_usd }}" required>
+        {{--<div class="col-md-6">--}}
+            {{--<div class="form-group">--}}
+                {{--<label class="" for="price_egp">Price EGP</label>--}}
+                {{--<input id="price_egp" type="text" autocomplete="off" class="form-control{{ $errors->has('price_egp') ? ' is-invalid' : '' }}" name="price_egp" value="{{ $resource->price_egp }}" required>--}}
 
-                @if ($errors->has('price_usd'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('price_usd') }}</strong>
-                    </span>
-                @endif
-            </div>
-        </div>
+                {{--@if ($errors->has('price_egp'))--}}
+                    {{--<span class="invalid-feedback" role="alert">--}}
+                        {{--<strong>{{ $errors->first('price_egp') }}</strong>--}}
+                    {{--</span>--}}
+                {{--@endif--}}
+            {{--</div>--}}
+        {{--</div>--}}
+        {{--<div class="col-md-6">--}}
+            {{--<div class="form-group">--}}
+                {{--<label class="" for="price_usd">Price USD</label>--}}
+                {{--<input id="price_usd" type="text" autocomplete="off" class="form-control{{ $errors->has('price_usd') ? ' is-invalid' : '' }}" name="price_usd" value="{{ $resource->price_usd }}" required>--}}
+
+                {{--@if ($errors->has('price_usd'))--}}
+                    {{--<span class="invalid-feedback" role="alert">--}}
+                        {{--<strong>{{ $errors->first('price_usd') }}</strong>--}}
+                    {{--</span>--}}
+                {{--@endif--}}
+            {{--</div>--}}
+        {{--</div>--}}
 
         <div class="col-md-6">
             <div class="form-group">
@@ -64,7 +79,6 @@
                 @endif
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="location">Location</label>
@@ -97,7 +111,23 @@
                 @endif
             </div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="" for="prices">Prices</label>
+                <select id="prices" multiple class="select2 form-control{{ $errors->has('prices') ? ' is-invalid' : '' }}" name="prices[]" >
+                    @foreach($prices as $price)
+                        <option @if(in_array($price->id, $resource->prices()->pluck('course_price_id')->toArray())) selected @endif value="{{ $price->uuid }}">{{ $price->price }} - {{ $price->currency->name }}</option>
+                    @endforeach
+                </select>
+
+                @if ($errors->has('prices'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('prices') }}</strong>
+                    </span>
+                @endif
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="certificates">Certificates</label>
                 <select id="certificates" multiple class="select2 form-control{{ $errors->has('certificates') ? ' is-invalid' : '' }}" name="certificates[]" >

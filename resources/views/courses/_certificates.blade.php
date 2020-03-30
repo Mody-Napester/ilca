@@ -7,8 +7,9 @@
             <th>#</th>
             <th>Certificate</th>
             <th>Control</th>
+            <th>Delivered</th>
             <th>By</th>
-            <th>Date</th>
+            <th>Created</th>
         </tr>
         </thead>
 
@@ -27,6 +28,13 @@
                         <i class="fa fa-fw fa-check"></i>
                     @else
                         <input type="checkbox" name="certificates[]" class="form-control" id="" value="{{ $certificate->uuid }}">
+                    @endif
+                </td>
+                <td>
+                    @if($csc)
+                        {{ $csc->date }}
+                    @else
+                        <input type="date" name="dates[]" class="form-control">
                     @endif
                 </td>
                 <td>

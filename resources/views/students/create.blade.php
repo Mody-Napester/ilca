@@ -16,18 +16,6 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label class="" for="email">Email</label>
-                <input type="email" id="email" autocomplete="off" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus/>
-
-                @if ($errors->has('email'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('email') }}</strong>
-                    </span>
-                @endif
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
                 <label class="" for="phone">Phone</label>
                 <input id="phone" type="text" autocomplete="off" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" name="phone" value="{{ old('phone') }}" required>
 
@@ -40,8 +28,36 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
+                <label class="" for="nationality">Nationality</label>
+                <select class="select2 form-control{{ $errors->has('nationality') ? ' is-invalid' : '' }}" name="nationality" id="nationality" required>
+                    @foreach($nationalities as $nationality)
+                        <option @if($nationality->id == old('nationality')) selected @endif value="{{ $nationality->id }}">{{ $nationality->nationality_en }}/{{ $nationality->nationality_ar }}</option>
+                    @endforeach
+                </select>
+
+                @if ($errors->has('nationality'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('nationality') }}</strong>
+                    </span>
+                @endif
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="" for="email">Email</label>
+                <input type="email" id="email" autocomplete="off" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}"/>
+
+                @if ($errors->has('email'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('email') }}</strong>
+                    </span>
+                @endif
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
                 <label class="" for="address">Address</label>
-                <input id="address" type="text" autocomplete="off" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" name="address" value="{{ old('address') }}" required>
+                <input id="address" type="text" autocomplete="off" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" name="address" value="{{ old('address') }}">
 
                 @if ($errors->has('address'))
                     <span class="invalid-feedback" role="alert">
@@ -50,22 +66,39 @@
                 @endif
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label class="" for="courses">Courses</label>
-                <select id="courses" multiple class="select2 form-control{{ $errors->has('courses') ? ' is-invalid' : '' }}" name="courses[]" >
-                    @foreach($courses as $course)
-                        <option value="{{ $course->uuid }}">{{ $course->title }} - {{ $course->date_from }} - {{ $course->location->name }}</option>
-                    @endforeach
-                </select>
+        {{--<div class="col-md-4">--}}
+            {{--<div class="form-group">--}}
+                {{--<label class="" for="sales">Sales</label>--}}
+                {{--<select id="sales" class="select2 form-control{{ $errors->has('sales') ? ' is-invalid' : '' }}" name="sales" >--}}
+                    {{--<option value="">Regular No Sales</option>--}}
+                    {{--@foreach($sales as $user)--}}
+                        {{--<option @if($user->uuid == old('sales')) selected @endif value="{{ $user->uuid }}">{{ $user->name }}</option>--}}
+                    {{--@endforeach--}}
+                {{--</select>--}}
 
-                @if ($errors->has('courses'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('courses') }}</strong>
-                    </span>
-                @endif
-            </div>
-        </div>
+                {{--@if ($errors->has('sales'))--}}
+                    {{--<span class="invalid-feedback" role="alert">--}}
+                        {{--<strong>{{ $errors->first('sales') }}</strong>--}}
+                    {{--</span>--}}
+                {{--@endif--}}
+            {{--</div>--}}
+        {{--</div>--}}
+        {{--<div class="col-md-6">--}}
+            {{--<div class="form-group">--}}
+                {{--<label class="" for="courses">Courses</label>--}}
+                {{--<select id="courses" multiple class="select2 form-control{{ $errors->has('courses') ? ' is-invalid' : '' }}" name="courses[]" >--}}
+                    {{--@foreach($courses as $course)--}}
+                        {{--<option value="{{ $course->uuid }}">{{ $course->title }} - {{ $course->date_from }} - {{ $course->location->name }}</option>--}}
+                    {{--@endforeach--}}
+                {{--</select>--}}
+
+                {{--@if ($errors->has('courses'))--}}
+                    {{--<span class="invalid-feedback" role="alert">--}}
+                        {{--<strong>{{ $errors->first('courses') }}</strong>--}}
+                    {{--</span>--}}
+                {{--@endif--}}
+            {{--</div>--}}
+        {{--</div>--}}
         <div class="col-md-6">
             <div class="form-group">
                 <label class="" for="comments">Comments</label>

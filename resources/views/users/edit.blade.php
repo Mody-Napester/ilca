@@ -54,13 +54,27 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label>Roles <span data-select2-target="roles_update" class="select-all text-success btn-link">(Select All)</span></label>
-        <select name="roles[]" id="roles_update" class="select2 select2-multiple" multiple="" data-placeholder="Choose ..." tabindex="-1" aria-hidden="true" required>
-            @foreach($roles as $role)
-                <option @if(in_array($role->id, $resource->roles->pluck('id')->toArray())) selected @endif value="{{ $role->uuid }}">{{ $role->name }}</option>
-            @endforeach
-        </select>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Type</label>
+                <select name="type" id="type" class="select2" data-placeholder="Choose ..." tabindex="-1" aria-hidden="true" required>
+                    @foreach($types as $type)
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Roles <span data-select2-target="roles_update" class="select-all text-success btn-link">(Select All)</span></label>
+                <select name="roles[]" id="roles_update" class="select2 select2-multiple" multiple="" data-placeholder="Choose ..." tabindex="-1" aria-hidden="true" required>
+                    @foreach($roles as $role)
+                        <option @if(in_array($role->id, $resource->roles->pluck('id')->toArray())) selected @endif value="{{ $role->uuid }}">{{ $role->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
     </div>
 
     <div class="form-group m-b-0">

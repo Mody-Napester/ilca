@@ -25,20 +25,6 @@ function languages(){
     return \App\Lookup::where('parent_id', $lookup->id)->get();
 }
 
-// Get lookup
-function lookup($by, $value){
-    $results = null;
-    $by_array = ['id','uuid','name','parent_id'];
-    if (in_array($by, $by_array)){$results = \App\Lookup::where($by, $value)->first();}
-    return $results;
-}
-
-// Get lookups
-function lookups($value){
-    $lookup = \App\Lookup::where('name', $value)->first();
-    return \App\Lookup::where('parent_id', $lookup->id)->get();
-}
-
 // Get lookups
 function str_well($value){
     return ucfirst(str_replace('_', ' ', $value));
@@ -74,22 +60,12 @@ function upload_file($type, $file, $path){
 
     $extention = strtolower($file->getClientOriginalExtension());
 
-    $validExtentions = [];
-    $file_mimes = lookups('file_mimes');
-
-    $results['mime'] = $type . '/' . $extention;
 
     if ($type == "image") {
-        foreach($file_mimes as $file_mime){
-            $ext = strtolower(str_replace('image/', '', $file_mime->name));
-            $validExtentions[] = $ext;
-        }
+        $validExtentions = ['jpg', 'png', 'gif'];
     }
     elseif ($type == "text") {
-        foreach($file_mimes as $file_mime){
-            $ext = strtolower(str_replace('text/', '', $file_mime->name));
-            $validExtentions[] = $ext;
-        }
+        $validExtentions = ['txt', 'doc', 'docx', 'pdf'];
     }
 
     if (in_array($extention, $validExtentions)) {

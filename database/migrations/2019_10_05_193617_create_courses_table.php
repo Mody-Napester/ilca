@@ -19,11 +19,12 @@ class CreateCoursesTable extends Migration
             $table->string('title');
             $table->text('details');
             $table->string('location_id');
-            $table->float('price_egp');
-            $table->float('price_usd');
+            $table->float('price_egp')->nullable();
+            $table->float('price_usd')->nullable();
             $table->string('date_from');
             $table->string('date_to');
-            $table->string('comments');
+            $table->boolean('is_active')->default(1);
+            $table->string('comments')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();

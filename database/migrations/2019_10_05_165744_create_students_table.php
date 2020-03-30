@@ -18,6 +18,7 @@ class CreateStudentsTable extends Migration
             $table->uuid('uuid');
             $table->string('name');
             $table->string('phone');
+            $table->string('nationality');
             $table->string('email');
             $table->integer('country_id')->nullable();
             $table->integer('city_id')->nullable();

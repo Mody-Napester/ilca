@@ -110,6 +110,10 @@ class LocationsController extends Controller
      */
     public function edit($uuid)
     {
+        if (!User::hasAuthority('edit.locations')){
+            return redirect('/');
+        }
+
         $data['resource'] = Location::getBy('uuid', $uuid);
         return response([
             'title'=> "Update resource " . $data['resource']->name,
@@ -127,6 +131,9 @@ class LocationsController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check permissions
+        if (!User::hasAuthority('update.locations')){
+            return redirect('/');
+        }
 
         // Get Resource
         $resource = Location::getBy('uuid', $uuid);
@@ -177,6 +184,10 @@ class LocationsController extends Controller
      */
     public function destroy($uuid)
     {
+        if (!User::hasAuthority('delete.locations')){
+            return redirect('/');
+        }
+
         $resource = Location::getBy('uuid', $uuid);
         if ($resource){
 

@@ -58,14 +58,18 @@
                             <td>{{ $resource->created_at }}</td>
                             <td>{{ $resource->updated_at }}</td>
                             <td>
-                                <a href="{{ route('certificates.edit', [$resource->uuid]) }}"
-                                   class="update-modal btn btn-sm btn-success">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <a href="{{ route('certificates.destroy', [$resource->uuid]) }}"
-                                   class="confirm-delete btn btn-sm btn-danger">
-                                    <i class="fa fa-times"></i>
-                                </a>
+                                @if (\App\User::hasAuthority('edit.certificates'))
+                                    <a href="{{ route('certificates.edit', [$resource->uuid]) }}"
+                                       class="update-modal btn btn-sm btn-success">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                @endif
+                                @if (\App\User::hasAuthority('delete.certificates'))
+                                    <a href="{{ route('certificates.destroy', [$resource->uuid]) }}"
+                                       class="confirm-delete btn btn-sm btn-danger">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

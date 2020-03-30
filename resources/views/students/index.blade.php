@@ -65,11 +65,11 @@
                             <th>Email</th>
                             {{--<th>Address</th>--}}
                             {{--<th>Comments</th>--}}
-                            {{--<th>Courses</th>--}}
-                            {{--<th>Created by</th>--}}
-                            {{--<th>Updated by</th>--}}
-                            {{--<th>Created at</th>--}}
-                            {{--<th>Updated at</th>--}}
+                            <th>Courses</th>
+                            <th>Created by</th>
+                            <th>Updated by</th>
+                            <th>Created at</th>
+                            <th>Updated at</th>
                             <th>Control</th>
                         </tr>
                     </thead>
@@ -82,17 +82,17 @@
                             <td>{{ $resource->phone }}</td>
                             <td>{{ ($nat = $resource->student_nationality)? $nat->nationality_en . '/' . $nat->nationality_ar : '-' }}</td>
                             <td>{{ $resource->email }}</td>
-{{--                            <td>{{ $resource->address }}</td>--}}
+                            {{--<td>{{ $resource->address }}</td>--}}
                             {{--<td>{{ $resource->comments }}</td>--}}
-                            {{--<td>--}}
-                                {{--@foreach($resource->courses as $course)--}}
-                                {{--{{ $course->title }},--}}
-                                {{--@endforeach--}}
-                            {{--</td>--}}
-                            {{--<td>{{ $resource->createdBy->name }}</td>--}}
-                            {{--<td>{{ ($resource->updatedBy)? $resource->updatedBy->name : '-' }}</td>--}}
-                            {{--<td>{{ $resource->created_at }}</td>--}}
-                            {{--<td>{{ $resource->updated_at }}</td>--}}
+                            <td>
+                                @foreach($resource->courses as $course)
+                                <span class="badge badge-danger">{{ $course->title }}</span>
+                                @endforeach
+                            </td>
+                            <td>{{ $resource->createdBy->name }}</td>
+                            <td>{{ ($resource->updatedBy)? $resource->updatedBy->name : '-' }}</td>
+                            <td>{{ $resource->created_at }}</td>
+                            <td>{{ $resource->updated_at }}</td>
                             <td>
                                 <div class="btn-group">
                                     @if (\App\User::hasAuthority('edit.students'))

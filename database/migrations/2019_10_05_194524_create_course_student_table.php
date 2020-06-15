@@ -20,6 +20,7 @@ class CreateCourseStudentTable extends Migration
             $table->integer('sales_id')->nullable();
             $table->integer('course_price_id')->nullable();
             $table->integer('created_by')->nullable();
+            $table->string('joined_at')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();
         });

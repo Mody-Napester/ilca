@@ -55,7 +55,7 @@
                     Here you will find all the resources to make actions on them.
                 </p>
 
-                <table id="datatable-history-buttons" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                <table data-page-length='50' id="datatable-history-buttons" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>

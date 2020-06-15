@@ -304,6 +304,7 @@ class StudentsController extends Controller
                     $course->students()->attach($student->id, [
                         'sales_id' => $sales,
                         'course_price_id' => $price->id,
+                        'joined_at' => $request->joined_at,
                     ]);
 
                     $data['message'] = [
@@ -342,5 +343,29 @@ class StudentsController extends Controller
      * */
     public function showOrEditPayments($student_uuid){
 
+    }
+    /*
+     * showOrEditPayments
+     * */
+    public function destroyStudentCourses($student_course_id){
+        $studentCourse = DB::table('course_student')->where('id', '=', $student_course_id)->first();
+
+        if($studentCourse){
+            DB::table('course_student')->where('id', '=', $student_course_id)->delete();
+
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Deleted Successfully',
+            ];
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Student Course Not Exists',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
     }
 }

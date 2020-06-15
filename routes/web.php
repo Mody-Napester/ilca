@@ -33,6 +33,8 @@ Route::group(['prefix'=>'dashboard', 'middleware' => 'auth'],function (){
     Route::resource('students', 'StudentsController');
     Route::get('students/courses/{student_uuid}', 'StudentsController@showOrEditCourses')->name('students.courses.index');
     Route::post('students/courses/{student_uuid}', 'StudentsController@storeStudentCourses')->name('students.courses.store');
+    Route::delete('students/courses/destroy/{student_course_id}', 'StudentsController@destroyStudentCourses')->name('students.courses.destroy');
+
     Route::get('students/certificates/{student_uuid}', 'StudentsController@showOrEditCertificates')->name('students.certificates.index');
 
     Route::resource('trainers', 'TrainersController');

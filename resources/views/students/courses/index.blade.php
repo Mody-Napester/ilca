@@ -11,7 +11,7 @@
                         @csrf
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="" for="courses">Course</label>
                                     <select id="course" class="select2 form-control{{ $errors->has('courses') ? ' is-invalid' : '' }}" name="course">
@@ -27,12 +27,12 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="" for="price">Price</label>
                                     <select id="price" class="select2 form-control{{ $errors->has('price') ? ' is-invalid' : '' }}" name="price">
                                         @foreach($prices as $price)
-                                                <option value="{{ $price->uuid }}">{{ $price->price }} - {{ $price->currency->name }}</option>
+                                                <option value="{{ $price->uuid }}">{{ $price->price }} - {{ $price->currency->code }}</option>
                                         @endforeach
                                     </select>
 
@@ -43,7 +43,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="" for="sales">Sales</label>
                                     <select id="sales" class="select2 form-control{{ $errors->has('sales') ? ' is-invalid' : '' }}" name="sales">
@@ -56,6 +56,18 @@
                                     @if ($errors->has('sales'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('sales') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="" for="joined_at">Joined at</label>
+                                    <input type="date" name="joined_at" id="joined_at" class="form-control{{ $errors->has('joined_at') ? ' is-invalid' : '' }}">
+
+                                    @if ($errors->has('joined_at'))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->first('joined_at') }}</strong>
                                         </span>
                                     @endif
                                 </div>
@@ -79,6 +91,7 @@
                             <th>Course</th>
                             <th>Price</th>
                             <th>By Sales</th>
+                            <th>Joined at</th>
                             <th>Created at</th>
                             <th>Control</th>
                         </tr>
@@ -90,22 +103,21 @@
                                 <td>{{  \App\Course::getBy('id', $studentCourse->course_id )->title }}</td>
                                 <td>{{ \App\CoursePrice::getBy('id', $studentCourse->course_price_id)->price }}</td>
                                 <td>{{ ($studentCourse->sales_id != null)? \App\User::getBy('id', $studentCourse->sales_id)->name : '-' }}</td>
+                                <td>{{ $studentCourse->joined_at }}</td>
                                 <td>{{ $studentCourse->created_at }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        @if (\App\User::hasAuthority('edit.students'))
-                                            <a href="{{ route('students.edit', [$student->uuid]) }}"
-                                               class="update-modal btn btn-sm btn-success">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                        @endif
+                                        {{--@if (\App\User::hasAuthority('edit.students'))--}}
+                                            {{--<a href="{{ route('students.edit', [$student->uuid]) }}"--}}
+                                               {{--class="update-modal btn btn-sm btn-success">--}}
+                                                {{--<i class="fa fa-edit"></i>--}}
+                                            {{--</a>--}}
+                                        {{--@endif--}}
 
-                                        @if (\App\User::hasAuthority('delete.students'))
-                                            <a href="{{ route('students.destroy', [$student->uuid]) }}"
-                                               class="confirm-delete btn btn-sm btn-danger">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        @endif
+                                        <a href="{{ route('students.courses.destroy', [$studentCourse->id]) }}"
+                                           class="confirm-delete btn btn-sm btn-danger">
+                                            <i class="fa fa-times"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

@@ -38,7 +38,7 @@ class StudentsController extends Controller
             return redirect('/');
         }
 
-        $data['resources'] = Student::all();
+        $data['resources'] = Student::paginate(20);
         $data['courses'] = Course::all();
         $data['nationalities'] = Nationality::all();
         $data['sales'] = User::where('user_type_id', 2)->get(); // Sales

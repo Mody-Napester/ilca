@@ -152,6 +152,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $resources->links() }}
         </div>
     </div>
     <!-- end row -->

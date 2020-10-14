@@ -281,7 +281,6 @@ class StudentsController extends Controller
      * */
     public function storeStudentCourses(Request $request, $student_uuid){
 
-//        dd($request->all());
         $course = Course::getBy('uuid', $request->course);
         $sales = ($request->has('sales') && $request->sales != '0' ) ? User::getBy('uuid', $request->sales)->id : null;
         $student = Student::getBy('uuid', $student_uuid);
@@ -305,6 +304,7 @@ class StudentsController extends Controller
                         'sales_id' => $sales,
                         'course_price_id' => $price->id,
                         'joined_at' => $request->joined_at,
+                        'attendance_type' => $request->attendance_type,
                     ]);
 
                     $data['message'] = [
@@ -320,6 +320,64 @@ class StudentsController extends Controller
                     'text' => 'Student Not Exists',
                 ];
             }
+        }else{
+            $data['message'] = [
+                'msg_status' => 0,
+                'type' => 'danger',
+                'text' => 'Course Not Exists',
+            ];
+        }
+
+        return back()->with('message', $data['message']);
+    }
+
+    /**
+     * Edit Student Course
+     */
+    public function editStudentCourses($student_course_id)
+    {
+        $data['studentCourse'] = DB::table('course_student')->where('id', $student_course_id)->first();
+
+        $data['course'] = Course::getBy('id', $data['studentCourse']->course_id);
+
+        $data['courses'] = Course::where('is_active', 1)->get();
+
+        $data['prices'] = CoursePrice::all();
+
+        $data['sales'] = User::where('user_type_id', 2)->get(); // Sales
+
+        $data['title'] = "Courses For : <span class='text-danger'>" . $data['course']->name . "</span>";
+
+        return response([
+            'title' => $data['title'],
+            'view' => view('students.courses.edit', $data)->render(),
+        ]);
+    }
+
+    /*
+     * updateStudentCourses
+     * */
+    public function updateStudentCourses(Request $request, $student_course_id){
+
+        $data['studentCourse'] = DB::table('course_student')->where('id', $student_course_id)->first();
+
+        $course = Course::getBy('uuid', $request->course);
+        $sales = ($request->has('sales') && $request->sales != '0' ) ? User::getBy('uuid', $request->sales)->id : null;
+        $price = CoursePrice::getBy('uuid', $request->price);
+
+        if($course){
+            DB::table('course_student')->where('id', $student_course_id)->update([
+                'sales_id' => $sales,
+                'course_price_id' => $price->id,
+                'joined_at' => $request->joined_at,
+                'attendance_type' => $request->attendance_type,
+            ]);
+
+            $data['message'] = [
+                'msg_status' => 1,
+                'type' => 'success',
+                'text' => 'Updated Successfully',
+            ];
         }else{
             $data['message'] = [
                 'msg_status' => 0,

@@ -39,7 +39,37 @@ $(document).ready(function(){
                 removeLoarder();
             },
             error:function () {
-                
+
+            }
+        });
+
+        // Show modal
+        targetModal.modal();
+    });
+
+    // Update Student Course
+    $('body').on('click', '.update-course-modal', function (event) {
+        event.preventDefault();
+        var url, targetModal;
+        url = $(this).attr('href');
+        targetModal = $('#update_course-modal');
+
+        // Get contents
+        $.ajax({
+            method:'GET',
+            url:url,
+            beforeSend:function () {
+                addLoader();
+            },
+            success:function (data) {
+                targetModal.find('#editCourseModalLabel').html(data.title);
+                targetModal.find('.modal-body').html(data.view);
+                // Select2
+                $(".select2").select2();
+                removeLoarder();
+            },
+            error:function () {
+
             }
         });
 

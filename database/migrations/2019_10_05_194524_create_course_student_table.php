@@ -18,6 +18,7 @@ class CreateCourseStudentTable extends Migration
             $table->integer('course_id');
             $table->integer('student_id');
             $table->integer('sales_id')->nullable();
+            $table->string('attendance_type')->nullable();
             $table->integer('course_price_id')->nullable();
             $table->integer('created_by')->nullable();
             $table->string('joined_at')->nullable();

@@ -320,6 +320,8 @@
 
 <!-- Update Modal -->
 @include('_modals.update')
+<!-- Update Course Modal -->
+@include('_modals.update_course')
 <!-- Delete Modal -->
 @include('_modals.delete')
 <!-- Certificates Modal -->

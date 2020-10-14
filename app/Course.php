@@ -118,7 +118,7 @@ class Course extends Model
     public function students()
     {
         return $this->belongsToMany('App\Student', 'course_student')
-            ->withPivot(['sales_id', 'course_price_id', 'joined_at'])->withTimestamps();
+            ->withPivot(['sales_id', 'course_price_id', 'joined_at', 'attendance_type'])->withTimestamps();
     }
 
     /**

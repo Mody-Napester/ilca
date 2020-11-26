@@ -48,6 +48,7 @@
                         <tr>
                             <th>Id</th>
                             <th>Name</th>
+                            <th>Type</th>
                             <th>Roles</th>
                             <th>Created by</th>
                             <th>Updated by</th>
@@ -62,6 +63,7 @@
                             <tr>
                                 <td>{{ $resource->id }}</td>
                                 <td>{{ $resource->name }}</td>
+                                <td>{{ \App\UserType::where('id', $resource->user_type_id)->first()->name }}</td>
                                 <td>
                                     @foreach($resource->roles as $role)
                                         <span class="label {{ $role->class }}">{{ $role->name }}</span>

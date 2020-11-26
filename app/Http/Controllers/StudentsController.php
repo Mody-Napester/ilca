@@ -32,13 +32,22 @@ class StudentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!User::hasAuthority('index.students')){
             return redirect('/');
         }
 
-        $data['resources'] = Student::paginate(20);
+//        dd($request->all());
+
+        if ($request->has('name') || $request->has('phone') || $request->has('email')){
+            $data['resources'] = Student::where('name','like', "%$request->name%")
+                ->orWhere('phone', $request->phone)
+                ->paginate(20);
+        }else{
+            $data['resources'] = Student::paginate(20);
+        }
+
         $data['courses'] = Course::all();
         $data['nationalities'] = Nationality::all();
         $data['sales'] = User::where('user_type_id', 2)->get(); // Sales

@@ -65,7 +65,7 @@
                                     <label class="" for="attendance_type">Attendance type</label>
                                     <select id="attendance_type" class="select2 form-control{{ $errors->has('attendance_type') ? ' is-invalid' : '' }}" name="attendance_type">
                                         <option value="online">Online</option>
-                                        <option value="offline">Offline</option>
+                                        <option value="offline">Attend in place</option>
                                     </select>
 
                                     @if ($errors->has('attendance_type'))
@@ -119,7 +119,7 @@
                                 <td>{{  \App\Course::getBy('id', $studentCourse->course_id )->title }}</td>
                                 <td>{{ \App\CoursePrice::getBy('id', $studentCourse->course_price_id)->price }}</td>
                                 <td>{{ ($studentCourse->sales_id != null)? \App\User::getBy('id', $studentCourse->sales_id)->name : '-' }}</td>
-                                <td>{{ $studentCourse->attendance_type }}</td>
+                                <td>{{ ($studentCourse->attendance_type == 'offline')? 'Attend in place' : 'Online' }}</td>
                                 <td>{{ $studentCourse->joined_at }}</td>
                                 <td>{{ $studentCourse->created_at }}</td>
                                 <td>

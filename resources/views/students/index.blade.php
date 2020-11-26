@@ -46,6 +46,20 @@
         <!-- end card-box -->
     </div>
 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card-box">
+                <h4 class="m-t-0 header-title">Search Student</h4>
+                <p class="text-muted font-14 m-b-30">
+                    Here you will find all the resources to make actions on them.
+                </p>
+
+                @include('students.search')
+            </div>
+        </div>
+    </div>
+        <!-- end row -->
+
 
     <div class="row" id="goToAll">
         <div class="col-lg-12">
@@ -76,6 +90,7 @@
 
                     <tbody>
                     @foreach($resources as $resource)
+                        <?php $courses = $resource->courses;?>
                         <tr>
                             <td>{{ $resource->id }}</td>
                             <td>{{ $resource->name }}</td>
@@ -85,7 +100,7 @@
                             {{--<td>{{ $resource->address }}</td>--}}
                             {{--<td>{{ $resource->comments }}</td>--}}
                             <td>
-                                @foreach($resource->courses as $course)
+                                @foreach($courses as $course)
                                 <span class="badge badge-danger">{{ $course->title }}</span>
                                 @endforeach
                             </td>
@@ -105,7 +120,7 @@
                                         <div class="dropdown" data-toggle="tooltip" data-placement="top" title="" data-original-title="Certificates">
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-certificate"></i> <span class="caret"></span></button>
                                             <ul class="dropdown-menu">
-                                                @foreach($resource->courses as $course)
+                                                @foreach($courses as $course)
                                                 <li><a href="{{ route('courses.certificates.show', [$course->uuid, $resource->uuid]) }}" class="show-certificates dropdown-item">{{ $course->title }}</a></li>
                                                 @endforeach
                                             </ul>
@@ -115,7 +130,7 @@
                                         <div class="dropdown" data-toggle="tooltip" data-placement="top" title="" data-original-title="Payments">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-dollar"></i> <span class="caret"></span></button>
                                             <ul class="dropdown-menu">
-                                                @foreach($resource->courses as $course)
+                                                @foreach($courses as $course)
                                                     <li><a href="{{ route('courses.payments.show', [$course->uuid, $resource->uuid]) }}" class="show-payments dropdown-item">{{ $course->title }}</a></li>
                                                 @endforeach
                                             </ul>
@@ -125,7 +140,7 @@
                                         <div class="dropdown" data-toggle="tooltip" data-placement="top" title="" data-original-title="Research">
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-sticky-note-o"></i> <span class="caret"></span></button>
                                             <ul class="dropdown-menu">
-                                                @foreach($resource->courses as $course)
+                                                @foreach($courses as $course)
                                                     <li><a href="{{ route('courses.research.show', [$course->uuid, $resource->uuid]) }}" class="show-research dropdown-item">{{ $course->title }}</a></li>
                                                 @endforeach
                                             </ul>

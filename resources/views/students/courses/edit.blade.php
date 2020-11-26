@@ -38,7 +38,7 @@
                 <label class="" for="attendance_type">Attendance type</label>
                 <select id="attendance_type" class="select2 form-control" name="attendance_type">
                     <option @if($studentCourse->attendance_type == 'online') selected @endif value="online">Online</option>
-                    <option @if($studentCourse->attendance_type == 'offline') selected @endif value="offline">Offline</option>
+                    <option @if($studentCourse->attendance_type == 'offline') selected @endif value="offline">Attend in place</option>
                 </select>
             </div>
         </div>

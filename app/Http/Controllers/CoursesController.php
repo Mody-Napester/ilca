@@ -278,16 +278,25 @@ class CoursesController extends Controller
                     $certificate = Certificate::getBy('uuid', $certificate_uuid);
 
                     if ($certificate) {
-                        DB::table('course_student_certificate')->insert([
-                           'course_id' => $data['course']->id,
-                           'student_id' => $data['student']->id,
-                           'certificate_id' => $certificate->id,
-                           'date' => $request->dates[$key],
-                           'created_at' => Carbon::now()->toDateTimeString(),
-                           'updated_at' => Carbon::now()->toDateTimeString(),
-                           'created_by' => auth()->user()->id,
-                           'updated_by' => auth()->user()->id
-                        ]);
+                        if($request->action == 'delete'){
+                            // Delete OLD
+                            DB::table('course_student_certificate')
+                                ->where('course_id', $data['course']->id)
+                                ->where('student_id', $data['student']->id)
+                                ->where('certificate_id', $certificate->id)
+                                ->delete();
+                        }else{
+                            DB::table('course_student_certificate')->insert([
+                                'course_id' => $data['course']->id,
+                                'student_id' => $data['student']->id,
+                                'certificate_id' => $certificate->id,
+                                'date' => $request->dates[$key],
+                                'created_at' => Carbon::now()->toDateTimeString(),
+                                'updated_at' => Carbon::now()->toDateTimeString(),
+                                'created_by' => auth()->user()->id,
+                                'updated_by' => auth()->user()->id
+                            ]);
+                        }
                     }
                 }
             }

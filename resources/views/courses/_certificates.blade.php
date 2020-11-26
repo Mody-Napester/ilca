@@ -1,12 +1,14 @@
 <form method="post" action="{{ route('courses.certificates.store', [$course->uuid, $student->uuid]) }}" enctype="multipart/form-data">
     {{ csrf_field() }}
 
+    <h6>Course : {{ $course->title }}</h6>
     <table class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
         <thead>
         <tr>
             <th>#</th>
             <th>Certificate</th>
             <th>Control</th>
+            <th>Checked</th>
             <th>Delivered</th>
             <th>By</th>
             <th>Created</th>
@@ -24,10 +26,11 @@
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $certificate->name }}</td>
                 <td>
+                    <input type="checkbox" name="certificates[]" class="form-control" id="" value="{{ $certificate->uuid }}">
+                </td>
+                <td>
                     @if($csc)
                         <i class="fa fa-fw fa-check"></i>
-                    @else
-                        <input type="checkbox" name="certificates[]" class="form-control" id="" value="{{ $certificate->uuid }}">
                     @endif
                 </td>
                 <td>
@@ -58,9 +61,8 @@
 
     <div class="form-group m-b-0">
         <div>
-            <button type="submit" class="btn btn-success waves-effect waves-light">
-                Update
-            </button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger waves-effect waves-light">Delete</button>
+            <button type="submit" name="action" value="update" class="btn btn-success waves-effect waves-light">Update</button>
         </div>
     </div>
 </form>

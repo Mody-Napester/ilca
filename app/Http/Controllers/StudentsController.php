@@ -40,10 +40,17 @@ class StudentsController extends Controller
 
 //        dd($request->all());
 
-        if ($request->has('name') || $request->has('phone') || $request->has('email')){
-            $data['resources'] = Student::where('name','like', "%$request->name%")
-                ->orWhere('phone', $request->phone)
-                ->paginate(20);
+        if ($request->has('name') || $request->has('phone') || $request->has('email') || $request->has('sales')){
+
+            $data['resources'] = Student::where('name','like', "%$request->name%")->orWhere('phone', $request->phone);
+
+            if($request->has('sales')){
+                $data['resources'] = Student::join('course_student', 'students.id', '=', 'course_student.student_id')
+                    ->where('sales_id', $request->sales)
+                    ->select('students.*', 'course_student.*');
+            }
+
+            $data['resources'] = $data['resources']->paginate(20);
         }else{
             $data['resources'] = Student::paginate(20);
         }

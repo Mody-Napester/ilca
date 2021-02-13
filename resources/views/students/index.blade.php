@@ -104,7 +104,7 @@
                                 <span class="badge badge-danger">{{ $course->title }}</span>
                                 @endforeach
                             </td>
-                            <td>{{ $resource->createdBy->name }}</td>
+                            <td>{{ ($resource->createdBy)? $resource->createdBy->name : '-' }}</td>
                             <td>{{ ($resource->updatedBy)? $resource->updatedBy->name : '-' }}</td>
                             <td>{{ $resource->created_at }}</td>
                             <td>{{ $resource->updated_at }}</td>
@@ -182,25 +182,25 @@
                 {
                     extend: 'copyHtml5',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
                 {
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
                 {
                     extend: 'pdfHtml5',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
                 {
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 }
             ],

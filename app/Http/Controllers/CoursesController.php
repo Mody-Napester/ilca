@@ -374,9 +374,11 @@ class CoursesController extends Controller
             ->where('student_id', $data['student']->id)
             ->sum('amount');
 
+        $data['shouldPayed'] = $data['price']->price - $data['sumPayments'];
+
         if($data['course']){
             // Add Payments
-            if ($request->has('amount') && $request->amount <= $data['sumPayments'] && $request->amount != 0) {
+            if ($request->has('amount') && $request->amount != 0 && $request->amount <= $data['shouldPayed']) {
                 DB::table('course_payment')->insert([
                     'course_id' => $data['course']->id,
                     'student_id' => $data['student']->id,

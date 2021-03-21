@@ -414,6 +414,53 @@ class CoursesController extends Controller
     }
 
     /**
+     * Store Student Payments.
+     */
+    public function scriptStoreStudentPayments()
+    {
+        $students = Student::all();
+
+        foreach ($students as $student){
+            $courses = $student->courses;
+
+            foreach ($courses as $course){
+                $data['course'] = $course;
+                $data['student'] = $student;
+
+                $studentCourses = DB::table('course_student')
+                    ->where('course_id', $data['course']->id)
+                    ->where('student_id', $data['student']->id)
+                    ->first();
+
+                $data['price'] = CoursePrice::getBy('id', $studentCourses->course_price_id);
+
+                $data['sumPayments'] = DB::table('course_payment')
+                    ->where('course_id', $data['course']->id)
+                    ->where('student_id', $data['student']->id)
+                    ->sum('amount');
+
+                $data['shouldPayed'] = $data['price']->price - $data['sumPayments'];
+
+//                echo $data['shouldPayed'] . "<br>";
+
+                DB::table('course_payment')->insert([
+                    'course_id' => $data['course']->id,
+                    'student_id' => $data['student']->id,
+                    'amount' => $data['shouldPayed'],
+                    'date' => date('Y-mm-dd'),
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'created_by' => auth()->user()->id,
+                    'updated_by' => auth()->user()->id
+                ]);
+            }
+
+        }
+
+        echo 'Done';
+    }
+
+    /**
      * Show Or Edit Research.
      */
     public function showOrEditResearch($course_uuid, $student_uuid)

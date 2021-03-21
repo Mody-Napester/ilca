@@ -40,17 +40,31 @@ class StudentsController extends Controller
 
 //        dd($request->all());
 
-        if ($request->has('name') || $request->has('phone') || $request->has('email') || $request->has('sales')){
+        if ($request->has('name') || $request->has('phone') || $request->has('sales')){
 
-            $data['resources'] = Student::where('name','like', "%$request->name%")->orWhere('phone', $request->phone);
+            $data['resources'] = Student::join('course_student', 'students.id', '=', 'course_student.student_id');
 
-            if($request->has('sales')){
-                $data['resources'] = Student::join('course_student', 'students.id', '=', 'course_student.student_id')
-                    ->where('sales_id', $request->sales)
-                    ->select('students.*', 'course_student.*');
+            if($request->has('sales') && $request->sales != 'choose'){
+                $data['resources'] = $data['resources']->where('sales_id', $request->sales);
             }
 
-            $data['resources'] = $data['resources']->paginate(20);
+            if($request->has('name')){
+                $data['resources'] = $data['resources']->where('name','like', "%$request->name%");
+            }
+
+            if($request->has('phone')){
+                $data['resources'] = $data['resources']->where('phone','like', "%$request->phone%");
+            }
+
+            $data['resources'] = $data['resources']->select('students.*',
+                'course_student.course_id',
+                'course_student.student_id',
+                'course_student.sales_id',
+                'course_student.attendance_type',
+                'course_student.course_price_id',
+                'course_student.joined_at'
+            )->paginate(20);
+
         }else{
             $data['resources'] = Student::paginate(20);
         }

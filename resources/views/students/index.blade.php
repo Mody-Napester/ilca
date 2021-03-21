@@ -28,7 +28,7 @@
         <div class="col-lg-12">
             <ul class="nav nav-tabs navtab-bg nav-justified">
                 {{--<li class="nav-item">--}}
-                    {{--<a href="#searchResource" data-toggle="tab" aria-expanded="false" class="nav-link active">Search and filter</a>--}}
+                {{--<a href="#searchResource" data-toggle="tab" aria-expanded="false" class="nav-link active">Search and filter</a>--}}
                 {{--</li>--}}
                 <li class="nav-item">
                     <a href="#createResource" data-toggle="tab" aria-expanded="true" class="nav-link active">Create new</a>
@@ -36,7 +36,7 @@
             </ul>
             <div class="tab-content">
                 {{--<div class="tab-pane active" id="searchResource">--}}
-                    {{--@include('students.search')--}}
+                {{--@include('students.search')--}}
                 {{--</div>--}}
                 <div class="tab-pane active" id="createResource">
                     @include('students.create')
@@ -58,7 +58,7 @@
             </div>
         </div>
     </div>
-        <!-- end row -->
+    <!-- end row -->
 
 
     <div class="row" id="goToAll">
@@ -71,21 +71,21 @@
 
                 <table data-page-length='50' id="datatable-history-buttons" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Nationality</th>
-                            <th>Email</th>
-                            {{--<th>Address</th>--}}
-                            {{--<th>Comments</th>--}}
-                            <th>Courses</th>
-                            <th>Created by</th>
-                            <th>Updated by</th>
-                            <th>Created at</th>
-                            <th>Updated at</th>
-                            <th>Control</th>
-                        </tr>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Nationality</th>
+                        <th>Email</th>
+                        {{--<th>Address</th>--}}
+                        {{--<th>Comments</th>--}}
+                        <th>Courses</th>
+                        <th>Created by</th>
+                        <th>Updated by</th>
+                        <th>Created at</th>
+                        <th>Updated at</th>
+                        <th>Control</th>
+                    </tr>
                     </thead>
 
                     <tbody>
@@ -101,7 +101,7 @@
                             {{--<td>{{ $resource->comments }}</td>--}}
                             <td>
                                 @foreach($courses as $course)
-                                <span class="badge badge-danger">{{ $course->title }}</span>
+                                    <span class="badge badge-danger">{{ $course->title }}</span>
                                 @endforeach
                             </td>
                             <td>{{ ($resource->createdBy)? $resource->createdBy->name : '-' }}</td>
@@ -113,7 +113,7 @@
                                     @if (\App\User::hasAuthority('edit.students'))
                                         <a href="{{ route('students.courses.index', [$resource->uuid]) }}" class="courses-modal btn btn-sm btn-warning"
                                            data-toggle="tooltip" data-placement="top" title="" data-original-title="Courses">
-                                           <i class="fa fa-clone"></i>
+                                            <i class="fa fa-clone"></i>
                                         </a>
                                     @endif
                                     @if (\App\User::hasAuthority('edit.students'))
@@ -121,7 +121,7 @@
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-certificate"></i> <span class="caret"></span></button>
                                             <ul class="dropdown-menu">
                                                 @foreach($courses as $course)
-                                                <li><a href="{{ route('courses.certificates.show', [$course->uuid, $resource->uuid]) }}" class="show-certificates dropdown-item">{{ $course->title }}</a></li>
+                                                    <li><a href="{{ route('courses.certificates.show', [$course->uuid, $resource->uuid]) }}" class="show-certificates dropdown-item">{{ $course->title }}</a></li>
                                                 @endforeach
                                             </ul>
                                         </div>
@@ -167,7 +167,7 @@
                     </tbody>
                 </table>
             </div>
-            {{ $resources->links() }}
+            {{ $resources->appends($_GET)->links() }}
         </div>
     </div>
     <!-- end row -->

@@ -30,6 +30,8 @@ Route::group(['prefix'=>'dashboard', 'middleware' => 'auth'],function (){
     Route::get('courses/research/{course_uuid}/{student_uuid}', 'CoursesController@showOrEditResearch')->name('courses.research.show');
     Route::post('courses/research/{course_uuid}/{student_uuid}', 'CoursesController@storeStudentResearch')->name('courses.research.store');
 
+    Route::get('run-script', 'CoursesController@scriptStoreStudentPayments');
+
     Route::resource('students', 'StudentsController');
     Route::get('students/courses/{student_uuid}', 'StudentsController@showOrEditCourses')->name('students.courses.index');
     Route::post('students/courses/{student_uuid}', 'StudentsController@storeStudentCourses')->name('students.courses.store');

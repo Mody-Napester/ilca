@@ -6,6 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
+                <div class="text-danger"><b>Add New Course:</b></div>
                 <div class="" id="" style="background-color: #eeeeee;padding: 10px;margin-bottom: 10px;">
                     <form method="post" action="{{ route('students.courses.store', [$student->uuid]) }}" enctype="multipart/form-data">
                         @csrf
@@ -99,6 +100,8 @@
                     </form>
                 </div>
 
+
+                <div class="text-danger"><b>All Student Courses:</b></div>
                 <div class="" id="">
                     <table class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                         <thead>

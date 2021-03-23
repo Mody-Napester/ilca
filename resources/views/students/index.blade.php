@@ -89,8 +89,12 @@
                     </thead>
 
                     <tbody>
+                    <?php $arrayIds = []; ?>
                     @foreach($resources as $resource)
-                        <?php $courses = $resource->courses;?>
+                        <?php
+                        $courses = $resource->courses;
+                        ?>
+                        @if(!in_array($resource->id, $arrayIds))
                         <tr>
                             <td>{{ $resource->id }}</td>
                             <td>{{ $resource->name }}</td>
@@ -163,6 +167,11 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
+
+                        <?php
+                        $arrayIds[] = $resource->id;
+                        ?>
                     @endforeach
                     </tbody>
                 </table>

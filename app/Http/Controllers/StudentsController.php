@@ -63,7 +63,7 @@ class StudentsController extends Controller
                 'course_student.attendance_type',
                 'course_student.course_price_id',
                 'course_student.joined_at'
-            )->paginate(20);
+            )->distinct()->paginate(20);
 
         }else{
             $data['resources'] = Student::paginate(20);

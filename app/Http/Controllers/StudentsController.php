@@ -65,6 +65,10 @@ class StudentsController extends Controller
                 'course_student.joined_at'
             )->distinct()->paginate(20);
 
+            if($request->has('payment') && $request->payment != 'choose'){
+                $data['payment_type'] = $request->payment;
+            }
+
         }else{
             $data['resources'] = Student::paginate(20);
         }
@@ -455,5 +459,18 @@ class StudentsController extends Controller
         }
 
         return back()->with('message', $data['message']);
+    }
+
+    /*
+     * searchStudentPayment
+     * */
+    public function searchStudentPayment(Request $request){
+
+        $data['students'] = DB::table('course_student')
+            ->join('', '', '=', '')
+            ->where('course_id', $data['course']->id)
+            ->where('student_id', $data['student']->id)
+            ->first();
+
     }
 }

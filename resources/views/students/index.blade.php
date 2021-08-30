@@ -92,11 +92,34 @@
                     <?php $arrayIds = []; ?>
                     @foreach($resources as $resource)
                         <?php
+
+                        $payments = \Illuminate\Support\Facades\DB::table('course_payment')
+                            ->where('course_id', $resource->course_id)
+                            ->where('student_id', $resource->student_id)
+                            ->sum('amount');
+
+                        $price = \Illuminate\Support\Facades\DB::table('course_prices')
+                            ->where('id', $resource->course_price_id)
+                            ->first();
+
+                        if($price){
+                            $price = $price->price;
+                        }else{
+                            $price = 0;
+                        }
+
                         $courses = $resource->courses;
+
+                        foreach ($courses as $key => $course){
+                            if($course->id == $resource->course_id && $payments < $price && isset($payment_type) && $payment_type == 2){
+                                unset($courses[$key]);
+                            }
+                        }
+
                         ?>
                         @if(!in_array($resource->id, $arrayIds))
                         <tr>
-                            <td>{{ $resource->id }}</td>
+                            <td>{{ $resource->id }} - {{ $payments }} - {{ $price }}</td>
                             <td>{{ $resource->name }}</td>
                             <td>{{ $resource->phone }}</td>
                             <td>{{ ($nat = $resource->student_nationality)? $nat->nationality_en . '/' . $nat->nationality_ar : '-' }}</td>

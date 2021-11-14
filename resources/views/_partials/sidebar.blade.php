@@ -69,8 +69,16 @@
                         <a href="{{ route('students.index') }}" class="waves-effect"><i class="ti-star"></i> <span> Students </span></a>
                     </li>
                     @endif
+
                 @endif
 
+                <li class="text-muted menu-title">Reports</li>
+                <li class="has_sub">
+                    <a href="{{ route('reports.getStudentsReport') }}" class="waves-effect"><i class="ti-star"></i> <span> Students Report </span></a>
+                </li>
+                <li class="has_sub">
+                    <a href="{{ route('reports.getPaymentsReport') }}" class="waves-effect"><i class="ti-star"></i> <span> Payments Report </span></a>
+                </li>
             </ul>
             <div class="clearfix"></div>
         </div>

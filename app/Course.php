@@ -12,11 +12,19 @@ class Course extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'details', 'location_id',
-        'price_egp', 'price_usd', 'comments',
-        'date_from', 'date_to',
-        'sales_id','is_active',
-        'created_by', 'updated_by'];
+        'title',
+        'details',
+        'location_id',
+        'price_egp',
+        'price_usd',
+        'comments',
+        'date_from',
+        'date_to',
+        'sales_id',
+        'is_active',
+        'created_by',
+        'updated_by'
+    ];
 
     /**
      *  Setup model event hooks

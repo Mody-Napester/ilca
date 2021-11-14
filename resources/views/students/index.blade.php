@@ -119,7 +119,7 @@
                         ?>
                         @if(!in_array($resource->id, $arrayIds))
                         <tr>
-                            <td>{{ $resource->id }} - {{ $payments }} - {{ $price }}</td>
+                            <td>{{ $resource->id }}</td>
                             <td>{{ $resource->name }}</td>
                             <td>{{ $resource->phone }}</td>
                             <td>{{ ($nat = $resource->student_nationality)? $nat->nationality_en . '/' . $nat->nationality_ar : '-' }}</td>

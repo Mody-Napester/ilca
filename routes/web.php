@@ -41,6 +41,10 @@ Route::group(['prefix'=>'dashboard', 'middleware' => 'auth'],function (){
 
     Route::get('students/search/payment', 'StudentsController@searchStudentPayment')->name('students.search.payment');
 
+    // Reports
+    Route::get('reports/students', 'ReportController@getStudentsReport')->name('reports.getStudentsReport');
+    Route::get('reports/payments', 'ReportController@getPaymentsReport')->name('reports.getPaymentsReport');
+
     Route::get('students/certificates/{student_uuid}', 'StudentsController@showOrEditCertificates')->name('students.certificates.index');
 
     Route::resource('trainers', 'TrainersController');

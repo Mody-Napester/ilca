@@ -12,9 +12,17 @@ class Student extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'phone', 'email', 'comments',
-        'country_id', 'city_id', 'area_id', 'address','nationality',
-        'created_by', 'updated_by'
+        'name',
+        'phone',
+        'email',
+        'comments',
+        'country_id',
+        'city_id',
+        'area_id',
+        'address',
+        'nationality',
+        'created_by',
+        'updated_by'
     ];
 
     /**
@@ -83,7 +91,17 @@ class Student extends Model
      */
     public function courses()
     {
-        return $this->belongsToMany('App\Course', 'course_student')->withTimestamps();
+        return $this->belongsToMany('App\Course', 'course_student')
+            ->withPivot(['course_price_id', 'joined_at', 'attendance_type'])
+            ->withTimestamps();
+    }
+
+    /**
+     *  Relationship with course price
+     */
+    public function course_price()
+    {
+        return $this->belongsTo('App\CoursePrice', 'course_price_id', 'id');
     }
 
     /**
